@@ -28,7 +28,7 @@ class OpenApiTest extends TestCase
     }
 
     // Test a simple schema with paths
-    public function xxxtestRoutes(): void
+    public function testRoutesWithValidation(): void
     {
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['validate' => true]);
         $routes = [];
@@ -36,14 +36,15 @@ class OpenApiTest extends TestCase
             $routes[] = "{$route}";
         }
         $this->assertEquals([
-            '/test.get > MyController',
-            '/test.put > MyController',
-            '/another.get > YourController'
+            '/test.get > Test/MyController',
+            '/test.put > Test/MyController:put',
+            '/another.get > Test\\YourController',
+            '/another.put > Test\\YourController',
         ], $routes);
     }
 
     // Test a schema without any paths defined
-    public function testEmpty(): void
+    public function testEmptyWithoutValidation(): void
     {
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-empty.json');
         $routes = [];
@@ -53,13 +54,34 @@ class OpenApiTest extends TestCase
         $this->assertEmpty($routes);
     }
 
-    // Test validating an invalid schema
-    public function testInvalid(): void
+    // Test a schema without any paths defined
+    public function testEmptyWithValidation(): void
     {
-        $slim = AppFactory::create();
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('[] OpenApi is missing required property: paths');
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-empty.json', ['validate' => true]);
+    }
+
+    // Test a schema with operationId missing
+    public function testNoopWithoutValidation(): void
+    {
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json');
+        $routes = [];
+        foreach ($openapi as $route) {
+            $routes[] = "{$route}";
+        }
+        $this->assertEquals([
+            '/test.get > Test/MyController',
+        ], $routes);
+    }
+
+    // Test a schema with operationId missing
+    public function testNoopWithValidation(): void
+    {
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json', ['validate' => true]);
+        $this->expectException('RuntimeException');
+        $this->expectExceptionMessage('Route /test:put is missing operationId');
+        foreach ($openapi as $route) {}
     }
 
     // Test Slim routing

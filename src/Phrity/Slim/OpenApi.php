@@ -15,6 +15,7 @@ use Traversable;
 class OpenApi implements IteratorAggregate
 {
     private $openapi;
+    private $settings;
     private static $defaultsettings = [
         'validate' => false,
     ];
@@ -38,6 +39,9 @@ class OpenApi implements IteratorAggregate
             foreach ($this->openapi->paths as $path => $pathItems) {
                 foreach ($pathItems->getOperations() as $method => $operation) {
                     if (empty($operation->operationId)) {
+                        if ($this->settings->validate) {
+                            throw new RuntimeException("Route {$path}:{$method} is missing operationId");
+                        }
                         continue; // Unusable
                     }
                     yield new Route($path, $method, $operation->operationId);

@@ -11,17 +11,6 @@
                 "responses": {}
             },
             "put": {
-                "operationId": "Test/MyController:put",
-                "responses": {}
-            }
-        },
-        "/another": {
-            "get": {
-                "operationId": "Test\\YourController",
-                "responses": {}
-            },
-            "put": {
-                "operationId": "Test\\YourController",
                 "responses": {}
             }
         }
