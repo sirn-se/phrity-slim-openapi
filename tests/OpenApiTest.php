@@ -81,7 +81,9 @@ class OpenApiTest extends TestCase
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json', ['validate' => true]);
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('Route /test:put is missing operationId');
-        foreach ($openapi as $route) {}
+        foreach ($openapi as $route) {
+            // Irrelevant
+        }
     }
 
     // Test Slim routing
