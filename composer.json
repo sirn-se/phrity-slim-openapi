@@ -3,7 +3,7 @@
   "type": "library",
   "description": "OpenApi implementation for Slim 4.",
   "homepage": "https://phrity.sirn.se/slim-openapi",
-  "keywords": [],
+  "keywords": ["slim", "openapi", "routing", "router"],
   "license": "MIT",
   "authors": [
     {
@@ -23,7 +23,7 @@
     }
   },
   "require": {
-    "php": "^7.4 || ^8.0",
+    "php": "^7.4 | ^8.0",
     "cebe/php-openapi": "^1.4",
     "slim/slim": "^4.0"
   },

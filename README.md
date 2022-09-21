@@ -5,7 +5,7 @@
 
 Adapter that reads [OpenApi](https://spec.openapis.org) schema and add included routes to [Slim](https://www.slimframework.com).
 
-Current version supports PHP `^7.4 || ^8.0`.
+Current version supports PHP `^7.4 | ^8.0`.
 
 ## Installation
 
@@ -33,31 +33,37 @@ $openapi->route($slim);
 ## How to define controllers
 
 In order for automatic mapping to work, the `operationId` must be set on all defined routes in OpenApi source.
-The following definitions are supported;
-* `Classname`
-* `Namespace/Classname`
-* `Namespace\\Classname`
-* `Classname:httpMethod`
-* `Namespace/Classname:httpMethod`
-* `Namespace\\Classname:httpMethod`
+If no method is specified, class method `::invoke()` will be called on class.
+
+| With invoke | With method |
+| --- | --- |
+| `Classname` | `Classname:httpMethod` |
+| `Namespace/Classname` | `Namespace/Classname:httpMethod` |
+| `Namespace\\Classname` | `Namespace\\Classname:httpMethod` |
 
 ### Example
 
 ```json
 {
     "openapi": "3.0.0",
-    "info": {},
     "paths": {
         "/test": {
             "get": {
                 "operationId": "Test/MyController",
-                "description": "Will invoke class Test\MyController"
+                "description": "Will invoke class Test\\MyController"
             },
             "put": {
                 "operationId": "Test\\MyController:put",
-                "description": "Will call method put() on class Test\MyController"
+                "description": "Will call method put() on class Test\\MyController"
             }
         }
     }
 }
 ```
+
+## Versions
+
+| Version | PHP | |
+| --- | --- | --- |
+| `1.0` | `^7.4 | ^8.0` | Route registry |
+
