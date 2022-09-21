@@ -65,5 +65,4 @@ If no method is specified, class method `::invoke()` will be called on class.
 
 | Version | PHP | |
 | --- | --- | --- |
-| `1.0` | `^7.4 | ^8.0` | Route registry |
-
+| `1.0` | `^7.4\|^8.0` | Route registry |
