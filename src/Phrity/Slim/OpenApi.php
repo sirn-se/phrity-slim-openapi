@@ -17,14 +17,14 @@ class OpenApi implements IteratorAggregate
     private $openapi;
     private $settings;
     private static $defaultsettings = [
-        'validate' => false,
+        'strict' => false,
     ];
 
     public function __construct(string $file, array $settings = [])
     {
         $this->openapi = Reader::readFromJsonFile($file);
         $this->settings = (object)array_merge(self::$defaultsettings, $settings);
-        if ($this->settings->validate && !$this->openapi->validate()) {
+        if ($this->settings->strict && !$this->openapi->validate()) {
             throw new RuntimeException(implode(', ', $this->openapi->getErrors()));
         }
     }
@@ -39,7 +39,7 @@ class OpenApi implements IteratorAggregate
             foreach ($this->openapi->paths as $path => $pathItems) {
                 foreach ($pathItems->getOperations() as $method => $operation) {
                     if (empty($operation->operationId)) {
-                        if ($this->settings->validate) {
+                        if ($this->settings->strict) {
                             throw new RuntimeException("Route {$path}:{$method} is missing operationId");
                         }
                         continue; // Unusable

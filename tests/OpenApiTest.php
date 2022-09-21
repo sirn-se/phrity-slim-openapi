@@ -28,9 +28,9 @@ class OpenApiTest extends TestCase
     }
 
     // Test a simple schema with paths
-    public function testRoutesWithValidation(): void
+    public function testRoutesStrict(): void
     {
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['validate' => true]);
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['strict' => true]);
         $routes = [];
         foreach ($openapi as $route) {
             $routes[] = "{$route}";
@@ -44,7 +44,7 @@ class OpenApiTest extends TestCase
     }
 
     // Test a schema without any paths defined
-    public function testEmptyWithoutValidation(): void
+    public function testEmptyNotStrict(): void
     {
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-empty.json');
         $routes = [];
@@ -55,15 +55,15 @@ class OpenApiTest extends TestCase
     }
 
     // Test a schema without any paths defined
-    public function testEmptyWithValidation(): void
+    public function testEmptyStrict(): void
     {
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('[] OpenApi is missing required property: paths');
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-empty.json', ['validate' => true]);
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-empty.json', ['strict' => true]);
     }
 
     // Test a schema with operationId missing
-    public function testNoopWithoutValidation(): void
+    public function testNoopNotStrict(): void
     {
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json');
         $routes = [];
@@ -76,9 +76,9 @@ class OpenApiTest extends TestCase
     }
 
     // Test a schema with operationId missing
-    public function testNoopWithValidation(): void
+    public function testNoopStrict(): void
     {
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json', ['validate' => true]);
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json', ['strict' => true]);
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('Route /test:put is missing operationId');
         foreach ($openapi as $route) {
@@ -90,7 +90,7 @@ class OpenApiTest extends TestCase
     public function testRouting(): void
     {
         $slim = AppFactory::create();
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['validate' => true]);
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['strict' => true]);
         $openapi->route($slim);
 
         $request = new ServerRequest('GET', '/test');

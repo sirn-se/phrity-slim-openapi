@@ -33,7 +33,31 @@ $openapi->route($slim);
 ## How to define controllers
 
 In order for automatic mapping to work, the `operationId` must be set on all defined routes in OpenApi source.
+The following definitions are supported;
+* `Classname`
+* `Namespace/Classname`
+* `Namespace\\Classname`
+* `Classname:httpMethod`
+* `Namespace/Classname:httpMethod`
+* `Namespace\\Classname:httpMethod`
 
-* `"operationId": "MyController"` will instanciate `MyController` class and call method `__invoke()`
-* `"operationId": "MyController:myMethod"` will instanciate `MyController` class and call method `myMethod()`
+### Example
 
+```json
+{
+    "openapi": "3.0.0",
+    "info": {},
+    "paths": {
+        "/test": {
+            "get": {
+                "operationId": "Test/MyController",
+                "description": "Will invoke class Test\MyController"
+            },
+            "put": {
+                "operationId": "Test\\MyController:put",
+                "description": "Will call method put() on class Test\MyController"
+            }
+        }
+    }
+}
+```
