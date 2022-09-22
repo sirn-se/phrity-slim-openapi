@@ -68,36 +68,35 @@ If no method is specified, class method `__invoke()` will be called on class.
 
 | Setting | Default | Description |
 | --- | --- | --- |
-| `strict` | `false` | If true, will validate OpenApi schema and throw exception on error |
-| `controller_prefix` | `""` | Prefix operationId when creating controller class name |
+| `strict` | `false` | If `true`, will validate OpenApi schema and throw exception on error |
+| `controller_prefix` | `""` | Prefix `operationId` when creating controller class name |
 | `controller_method` | `false` | Add current HTTP method (get, put, etc) if not specified in schema |
 
 ### Example
-
+```php
+$openapi = new OpenApi('openapi.json', [
+    'strict' => true,
+    `controller_prefix` => 'Test/',
+    `controller_method` => true,
+]);
+```
 ```json
-openapi.json -> {
+{
     "openapi": "3.0.0",
     "paths": {
         "/test": {
             "get": {
-                "operationId": "MyController"
+                "operationId": "MyController",
+                "description": Will call method get() on class Test\\MyController"
             },
             "put": {
-                "operationId": "MyController:myMethod"
+                "operationId": "MyController:myMethod",
+                "description": Will call method myMethod() on class Test\\MyController"
             }
         }
     }
 }
 ```
-```php
-$openapi = new OpenApi('openapi.json', [
-    'strict' => true,
-    `controller_prefix` => 'Test/',
-    `controller_method` => 'true,
-]);
-```
-* The `GET` request will call `Test\\MyController:get()`
-* The `PUT` request will call `Test\\MyController:myMethod()`
 
 ## Versions
 
