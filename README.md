@@ -28,6 +28,9 @@ $openapi = new OpenApi('openapi.json');
 
 // Push all routes from OpenApi to Slim
 $openapi->route($slim);
+
+// Run Slim
+$slim->run();
 ```
 
 ## How to define controllers
@@ -61,8 +64,44 @@ If no method is specified, class method `__invoke()` will be called on class.
 }
 ```
 
+## Settings
+
+| Setting | Default | Description |
+| --- | --- | --- |
+| `strict` | `false` | If true, will validate OpenApi schema and throw exception on error |
+| `controller_prefix` | `""` | Prefix operationId when creating controller class name |
+| `controller_method` | `false` | Add current HTTP method (get, put, etc) if not specified in schema |
+
+### Example
+
+```json
+openapi.json -> {
+    "openapi": "3.0.0",
+    "paths": {
+        "/test": {
+            "get": {
+                "operationId": "MyController"
+            },
+            "put": {
+                "operationId": "MyController:myMethod"
+            }
+        }
+    }
+}
+```
+```php
+$openapi = new OpenApi('openapi.json', [
+    'strict' => true,
+    `controller_prefix` => 'Test/',
+    `controller_method` => 'true,
+]);
+```
+* The `GET` request will call `Test\\MyController:get()`
+* The `PUT` request will call `Test\\MyController:myMethod()`
+
 ## Versions
 
 | Version | PHP | |
 | --- | --- | --- |
+| `1.1` | `^7.4\|^8.0` | Settings |
 | `1.0` | `^7.4\|^8.0` | Route registry |
