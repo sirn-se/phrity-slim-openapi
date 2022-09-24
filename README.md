@@ -4,8 +4,7 @@
 # OpenApi for Slim v4
 
 Adapter that reads [OpenApi](https://spec.openapis.org) schema and add included routes to [Slim](https://www.slimframework.com).
-
-Current version supports PHP `^7.4|^8.0`.
+By defining `operationId` in OpenApi schema, the adapter will automatically instanciate and call referenced controller class.
 
 ## Installation
 
@@ -76,8 +75,8 @@ If no method is specified, class method `__invoke()` will be called on class.
 ```php
 $openapi = new OpenApi('openapi.json', [
     'strict' => true,
-    `controller_prefix` => 'Test/',
-    `controller_method` => true,
+    'controller_prefix' => 'Test/',
+    'controller_method' => true,
 ]);
 ```
 ```json
@@ -87,11 +86,11 @@ $openapi = new OpenApi('openapi.json', [
         "/test": {
             "get": {
                 "operationId": "MyController",
-                "description": Will call method get() on class Test\\MyController"
+                "description": "Will call method get() on class Test\\MyController"
             },
             "put": {
                 "operationId": "MyController:myMethod",
-                "description": Will call method myMethod() on class Test\\MyController"
+                "description": "Will call method myMethod() on class Test\\MyController"
             }
         }
     }
@@ -102,5 +101,5 @@ $openapi = new OpenApi('openapi.json', [
 
 | Version | PHP | |
 | --- | --- | --- |
-| `1.1` | `^7.4\|^8.0` | Settings |
+| `1.1` | `^7.4\|^8.0` | Settings & helpers |
 | `1.0` | `^7.4\|^8.0` | Route registry |
