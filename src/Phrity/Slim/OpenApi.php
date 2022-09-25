@@ -1,25 +1,36 @@
 <?php
 
 /**
- * Route collector for Slim
+ * File for Slim OpenApi tests.
+ * @package Phrity > Slim > OpenApi
  */
 
 namespace Phrity\Slim;
 
 use cebe\openapi\Reader;
-use Slim\App;
 use IteratorAggregate;
 use RuntimeException;
+use Slim\App;
 use Traversable;
 
+/**
+ * Slim OpenApi route generator
+ */
 class OpenApi implements IteratorAggregate
 {
     private $openapi;
     private $settings;
     private static $defaultsettings = [
         'strict' => false,
+        'controller_prefix' => '',
+        'controller_method' => false,
     ];
 
+    /**
+     * Constructor for Slim OpenApi route generator
+     * @param string $file      File path to OpenApi schema
+     * @param array  $settings  Optional settings
+     */
     public function __construct(string $file, array $settings = [])
     {
         $this->openapi = Reader::readFromJsonFile($file);
@@ -29,7 +40,10 @@ class OpenApi implements IteratorAggregate
         }
     }
 
-    // Iterate possible routes
+    /**
+     * Iterate possible routes in OpenApi schema
+     * @return Traversable      List of Phrity\Slim\Route instances
+     */
     public function getIterator(): Traversable
     {
         return (function () {
@@ -44,25 +58,20 @@ class OpenApi implements IteratorAggregate
                         }
                         continue; // Unusable
                     }
-                    yield new Route($path, $method, $operation->operationId);
+                    yield new Route($this->settings, $path, $method, $operation->operationId);
                 }
             }
         })();
     }
 
-    // Register route on Slim
+    /**
+     * Register routes on Slim
+     * @param Slim\App          Slim instance to register routes on
+     */
     public function route(App $slim): void
     {
         foreach ($this->getIterator() as $route) {
-            $controller = $this->getController($route->operation);
-            $slim_route = call_user_func([$slim, $route->method], $route->path, $controller);
-            $slim_route->setName($route->operation);
+            $route->route($slim);
         }
-    }
-
-    // Format class name
-    private function getController(string $operation): string
-    {
-        return str_replace('/', "\\", $operation);
     }
 }

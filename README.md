@@ -4,8 +4,7 @@
 # OpenApi for Slim v4
 
 Adapter that reads [OpenApi](https://spec.openapis.org) schema and add included routes to [Slim](https://www.slimframework.com).
-
-Current version supports PHP `^7.4|^8.0`.
+By defining `operationId` in OpenApi schema, the adapter will automatically instanciate and call referenced controller class.
 
 ## Installation
 
@@ -28,6 +27,9 @@ $openapi = new OpenApi('openapi.json');
 
 // Push all routes from OpenApi to Slim
 $openapi->route($slim);
+
+// Run Slim
+$slim->run();
 ```
 
 ## How to define controllers
@@ -61,8 +63,43 @@ If no method is specified, class method `__invoke()` will be called on class.
 }
 ```
 
+## Settings
+
+| Setting | Default | Description |
+| --- | --- | --- |
+| `strict` | `false` | If `true`, will validate OpenApi schema and throw exception on error |
+| `controller_prefix` | `""` | Prefix `operationId` when creating controller class name |
+| `controller_method` | `false` | Add current HTTP method (get, put, etc) if not specified in schema |
+
+### Example
+```php
+$openapi = new OpenApi('openapi.json', [
+    'strict' => true,
+    'controller_prefix' => 'Test/',
+    'controller_method' => true,
+]);
+```
+```json
+{
+    "openapi": "3.0.0",
+    "paths": {
+        "/test": {
+            "get": {
+                "operationId": "MyController",
+                "description": "Will call method get() on class Test\\MyController"
+            },
+            "put": {
+                "operationId": "MyController:myMethod",
+                "description": "Will call method myMethod() on class Test\\MyController"
+            }
+        }
+    }
+}
+```
+
 ## Versions
 
 | Version | PHP | |
 | --- | --- | --- |
+| `1.1` | `^7.4\|^8.0` | Settings & helpers |
 | `1.0` | `^7.4\|^8.0` | Route registry |

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * File for Slim OpenApi tests.
+ * File for Slim OpenApi tests
  * @package Phrity > Slim > OpenApi
  */
 
@@ -9,15 +9,13 @@ declare(strict_types=1);
 
 namespace Phrity\Slim;
 
-use GuzzleHttp\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Phrity\Slim\OpenApi;
-use Slim\Factory\AppFactory;
 
 /**
- * Numerics ceil test class.
+ * Slim OpenApi controller test class
  */
-class OpenApiTest extends TestCase
+class ControllerTest extends TestCase
 {
     /**
      * Set up for all tests
@@ -28,6 +26,9 @@ class OpenApiTest extends TestCase
     }
 
     // Test a simple schema with paths
+    /**
+     *
+     */
     public function testRoutesStrict(): void
     {
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['strict' => true]);
@@ -36,14 +37,16 @@ class OpenApiTest extends TestCase
             $routes[] = "{$route}";
         }
         $this->assertEquals([
-            '/test.get > Test/MyController',
-            '/test.put > Test/MyController:put',
+            '/test.get > Test\\MyController',
+            '/test.put > Test\\MyController:put',
             '/another.get > Test\\YourController',
             '/another.put > Test\\YourController',
         ], $routes);
     }
 
-    // Test a schema without any paths defined
+    /**
+     * Test a schema without any paths defined
+     */
     public function testEmptyNotStrict(): void
     {
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-empty.json');
@@ -54,7 +57,9 @@ class OpenApiTest extends TestCase
         $this->assertEmpty($routes);
     }
 
-    // Test a schema without any paths defined
+    /**
+     * Test a schema without any paths defined
+     */
     public function testEmptyStrict(): void
     {
         $this->expectException('RuntimeException');
@@ -62,7 +67,9 @@ class OpenApiTest extends TestCase
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-empty.json', ['strict' => true]);
     }
 
-    // Test a schema with operationId missing
+    /**
+     * Test a schema with operationId missing
+     */
     public function testNoopNotStrict(): void
     {
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json');
@@ -71,11 +78,13 @@ class OpenApiTest extends TestCase
             $routes[] = "{$route}";
         }
         $this->assertEquals([
-            '/test.get > Test/MyController',
+            '/test.get > Test\\MyController',
         ], $routes);
     }
 
-    // Test a schema with operationId missing
+    /**
+     * Test a schema with operationId missing
+     */
     public function testNoopStrict(): void
     {
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json', ['strict' => true]);
@@ -86,21 +95,25 @@ class OpenApiTest extends TestCase
         }
     }
 
-    // Test Slim routing
-    public function testRouting(): void
+    /**
+     * Test a schema with prefix and auto methods
+     */
+    public function testControllerMagic(): void
     {
-        $slim = AppFactory::create();
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['strict' => true]);
-        $openapi->route($slim);
-
-        $request = new ServerRequest('GET', '/test');
-        $response = $slim->handle($request);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals("MyController::__invoke", $response->getBody()->__toString());
-
-        $request = new ServerRequest('PUT', '/test');
-        $response = $slim->handle($request);
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals("MyController::put", $response->getBody()->__toString());
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-2.json', [
+            'strict' => true,
+            'controller_prefix' => 'Test/',
+            'controller_method' => true,
+        ]);
+        $routes = [];
+        foreach ($openapi as $route) {
+            $routes[] = "{$route}";
+        }
+        $this->assertEquals([
+            '/test.get > Test\\MyController:get',
+            '/test.put > Test\\MyController:custom',
+            '/another.get > Test\\YourController:custom',
+            '/another.put > Test\\YourController:put',
+        ], $routes);
     }
 }
