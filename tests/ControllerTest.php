@@ -112,8 +112,23 @@ class ControllerTest extends TestCase
         $this->assertEquals([
             '/test.get > Test\\MyController:get',
             '/test.put > Test\\MyController:custom',
-            '/another.get > Test\\YourController:custom',
-            '/another.put > Test\\YourController:put',
+            '/argument/{arg_1}/{arg_2}.get > Test\MyController:argument',
+            '/arguments/{arg_1}/{arg_2}.get > Test\MyController:arguments',
+        ], $routes);
+    }
+
+    /**
+     * Test a schema with prefix and auto methods
+     */
+    public function testContainer(): void
+    {
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-container.json', ['strict' => true]);
+        $routes = [];
+        foreach ($openapi as $route) {
+            $routes[] = "{$route}";
+        }
+        $this->assertEquals([
+            '/test.get > ContainerController:byContainer',
         ], $routes);
     }
 }
