@@ -1,0 +1,19 @@
+openapi: "3.0.0"
+info:
+    title: "Test schema 1"
+    version: "1.0.0"
+paths:
+    /test:
+        get:
+            operationId: "Test/MyController"
+            responses: null
+        put:
+            operationId: "Test/MyController:put"
+            responses: null
+    /another:
+        get:
+            operationId: "Test\\YourController"
+            responses: null
+        put:
+            operationId: "Test\\YourController"
+            responses:: null

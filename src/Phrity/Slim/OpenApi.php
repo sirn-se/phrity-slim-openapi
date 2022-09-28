@@ -7,6 +7,7 @@
 
 namespace Phrity\Slim;
 
+use cebe\openapi\spec\OpenApi as OpenApiSpec;
 use cebe\openapi\Reader;
 use IteratorAggregate;
 use RuntimeException;
@@ -14,26 +15,27 @@ use Slim\App;
 use Traversable;
 
 /**
- * Slim OpenApi route generator
+ * Slim OpenApi route generator.
+ * @implements IteratorAggregate<Route>
  */
 class OpenApi implements IteratorAggregate
 {
-    private $openapi;
-    private $settings;
-    private static $defaultsettings = [
+    private OpenApiSpec $openapi;
+    private object $settings;
+    private static array $defaultsettings = [
         'strict' => false,
         'controller_prefix' => '',
         'controller_method' => false,
     ];
 
     /**
-     * Constructor for Slim OpenApi route generator
-     * @param string $file      File path to OpenApi schema
-     * @param array  $settings  Optional settings
+     * Constructor for Slim OpenApi route generator.
+     * @param string $file                  File path to OpenApi schema
+     * @param array<string,mixed> $settings Optional settings
      */
     public function __construct(string $file, array $settings = [])
     {
-        $this->openapi = Reader::readFromJsonFile($file);
+        $this->openapi = $this->readFile($file);
         $this->settings = (object)array_merge(self::$defaultsettings, $settings);
         if ($this->settings->strict && !$this->openapi->validate()) {
             throw new RuntimeException(implode(', ', $this->openapi->getErrors()));
@@ -41,8 +43,8 @@ class OpenApi implements IteratorAggregate
     }
 
     /**
-     * Iterate possible routes in OpenApi schema
-     * @return Traversable      List of Phrity\Slim\Route instances
+     * Iterate possible routes in OpenApi schema.
+     * @return Traversable<Route>           List of Phrity\Slim\Route instances
      */
     public function getIterator(): Traversable
     {
@@ -65,13 +67,33 @@ class OpenApi implements IteratorAggregate
     }
 
     /**
-     * Register routes on Slim
-     * @param Slim\App          Slim instance to register routes on
+     * Register routes on Slim App.
+     * @param \Slim\App $app                Slim App instance to register routes on
      */
-    public function route(App $slim): void
+    public function route(App $app): void
     {
         foreach ($this->getIterator() as $route) {
-            $route->route($slim);
+            $route->route($app);
         }
+    }
+
+    /**
+     * Read OpenApi source from json or yaml file.
+     * @param string $file                  File path to OpenApi schema
+     * @return OpenApiSpec                  OpenApi specification
+     */
+    private function readFile(string $file): OpenApiSpec
+    {
+        if (!is_readable($file)) {
+            throw new RuntimeException("Source file {$file} do not exist or is not readable");
+        }
+        switch (pathinfo($file, PATHINFO_EXTENSION)) {
+            case 'json':
+                return Reader::readFromJsonFile($file);
+            case 'yml':
+            case 'yaml':
+                return Reader::readFromYamlFile($file);
+        }
+        throw new RuntimeException("Could not parse {$file}, invalid file format");
     }
 }

@@ -30,6 +30,7 @@
   },
   "require-dev": {
     "guzzlehttp/psr7": "^2.0",
+    "phpstan/phpstan": "^1.8",
     "phpunit/phpunit": "^9.0",
     "php-coveralls/php-coveralls": "^2.0",
     "php-di/php-di": "^6.0",
