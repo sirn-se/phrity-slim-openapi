@@ -52,11 +52,11 @@ If no method is specified, class method `__invoke()` will be called on class.
         "/test": {
             "get": {
                 "operationId": "Test/MyController",
-                "description": "Will invoke on class Test\\MyController"
+                "description": "Will invoke on class Test\MyController"
             },
             "put": {
                 "operationId": "Test\\MyController:put",
-                "description": "Will call method put() on class Test\\MyController"
+                "description": "Will call method put() on class Test\MyController"
             }
         }
     }
@@ -71,31 +71,11 @@ If no method is specified, class method `__invoke()` will be called on class.
 | `controller_prefix` | `""` | Prefix `operationId` when creating controller class name |
 | `controller_method` | `false` | Add current HTTP method (get, put, etc) if not specified in schema |
 
-### Example
-```php
-$openapi = new OpenApi('openapi.json', [
-    'strict' => true,
-    'controller_prefix' => 'Test/',
-    'controller_method' => true,
-]);
-```
-```json
-{
-    "openapi": "3.0.0",
-    "paths": {
-        "/test": {
-            "get": {
-                "operationId": "MyController",
-                "description": "Will call method get() on class Test\\MyController"
-            },
-            "put": {
-                "operationId": "MyController:myMethod",
-                "description": "Will call method myMethod() on class Test\\MyController"
-            }
-        }
-    }
-}
-```
+
+## More documentation
+
+[Basics](docs/Basics)
+
 
 ## Versions
 
