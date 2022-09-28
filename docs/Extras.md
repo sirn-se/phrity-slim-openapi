@@ -1,13 +1,13 @@
 # Extras
 
-[Basics](docs/Basics.md) • [Settings](docs/Settings.md) • Extras
+[Basics](Basics.md) • [Settings](Settings.md) • Extras
 
 ## Using Slim with Container
 
 If a Container has been added to Slim, it can be used to resolve mappings to controllers.
 First, Slim will check the Container if it has an item with key matching `operationId` in OpenApi schema.
 If so, it expects the Container to return a controller class to be used.
-If no match it will attempt to resolve as normal.
+If no match it will attempt to resolve as usual.
 
 If a Container is used, it will always be passed to controller constructor.
 
@@ -68,9 +68,9 @@ use Slim\Factory\AppFactory;
 $slim = AppFactory::create();
 $openapi = new OpenApi('openapi.json');
 
-foreach ($openapiopenapi as $route) {
+foreach ($openapi as $route) {
     // $my_callable may be a function or Slim compatible class/method reference
-    call_user_func([$slim, $route->method], $route->path, $my_callable);
+    $slim_route = call_user_func([$slim, $route->method], $route->path, $my_callable);
 }
 ```
 

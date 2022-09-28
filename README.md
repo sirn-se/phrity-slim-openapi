@@ -66,9 +66,9 @@ If no method is specified, class method `__invoke()` will be called on class.
 
 # Documentation
 
-[Basics](docs/Basics.md)
-[Settings](docs/Settings.md)
-[Extras](docs/Extras.md)
+- [Basics](docs/Basics.md)
+- [Settings](docs/Settings.md)
+- [Extras](docs/Extras.md)
 
 
 ## Versions

@@ -1,6 +1,6 @@
 # Basics
 
-Basics • [Settings](docs/Settings.md) • [Extras](docs/Extras.md)
+Basics • [Settings](Settings.md) • [Extras](Extras.md)
 
 
 ## Basic operation using JSON source
