@@ -52,11 +52,11 @@ If no method is specified, class method `__invoke()` will be called on class.
         "/test": {
             "get": {
                 "operationId": "Test/MyController",
-                "description": "Will invoke on class Test\MyController"
+                "description": "Will invoke on class Test\\MyController"
             },
             "put": {
                 "operationId": "Test\\MyController:put",
-                "description": "Will call method put() on class Test\MyController"
+                "description": "Will call method put() on class Test\\MyController"
             }
         }
     }
@@ -72,9 +72,9 @@ If no method is specified, class method `__invoke()` will be called on class.
 | `controller_method` | `false` | Add current HTTP method (get, put, etc) if not specified in schema |
 
 
-## More documentation
+# Documentation
 
-[Basics](docs/Basics)
+[Basics](docs/Basics.md)
 
 
 ## Versions

@@ -35,10 +35,15 @@ $slim->run();
 Call results per operation
 ```
 GET /test
-Test\MyController.__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
-
+```
+```php
+Test\\MyController->__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+```
+```
 PUT /test
-Test\MyController.put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+```
+```php
+Test\\MyController->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
 
 ## Basic operation using YAML source
@@ -48,9 +53,6 @@ The `operationId` may or may not define method to call on class. If not specifie
 `openapi.yaml` source
 ```yaml
 openapi: "3.0.0"
-info:
-    title: "Test schema 1"
-    version: "1.0.0"
 paths:
     /test:
         get:
@@ -73,16 +75,21 @@ $slim->run();
 Call results per operation
 ```
 GET /test
-Test\MyController.__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
-
+```
+```php
+Test\\MyController->__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+```
+```
 PUT /test
-Test\MyController.put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+```
+```php
+Test\\MyController->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
 
 ## Using class prefix
 
 By defining `controller_prefix` setting, all specified `operationId` will be prefixed.
-This allow OepnApi schema to "hide" class namespaces.
+This allow OpenApi schema to "hide" class namespaces.
 
 `openapi.json` source
 ```json
@@ -117,10 +124,15 @@ $slim->run();
 Call results per operation
 ```
 GET /test
-Test\MyController.__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
-
+```
+```php
+Test\\MyController->__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+```
+```
 PUT /test
-Test\MyController.put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+```
+```php
+Test\\MyController->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
 
 ## Automatic method mapping
@@ -161,8 +173,13 @@ $slim->run();
 Call results per operation
 ```
 GET /test
-Test\MyController.get(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
-
+```
+```php
+Test\\MyController->get(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+```
+```
 PUT /test
-Test\MyController.custom(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+```
+```php
+Test\\MyController->custom(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
