@@ -1,5 +1,8 @@
 # Basics
 
+Basics • [Settings](docs/Settings.md) • [Extras](docs/Extras.md)
+
+
 ## Basic operation using JSON source
 
 The `operationId` may or may not define method to call on class. If not specified, `__invoke()` will be called.
@@ -37,13 +40,13 @@ Call results per operation
 GET /test
 ```
 ```php
-Test\\MyController->__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+(new Test\\MyController())->__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
 ```
 PUT /test
 ```
 ```php
-Test\\MyController->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+(new Test\\MyController())->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
 
 ## Basic operation using YAML source
@@ -77,13 +80,13 @@ Call results per operation
 GET /test
 ```
 ```php
-Test\\MyController->__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+(new Test\\MyController())->__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
 ```
 PUT /test
 ```
 ```php
-Test\\MyController->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+(new Test\\MyController())->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
 
 ## Using class prefix
@@ -126,13 +129,13 @@ Call results per operation
 GET /test
 ```
 ```php
-Test\\MyController->__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+(new Test\\MyController())->__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
 ```
 PUT /test
 ```
 ```php
-Test\\MyController->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+(new Test\\MyController())->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
 
 ## Automatic method mapping
@@ -175,11 +178,11 @@ Call results per operation
 GET /test
 ```
 ```php
-Test\\MyController->get(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+(new Test\\MyController())->get(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
 ```
 PUT /test
 ```
 ```php
-Test\\MyController->custom(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
+(new Test\\MyController())->custom(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```

@@ -63,18 +63,12 @@ If no method is specified, class method `__invoke()` will be called on class.
 }
 ```
 
-## Settings
-
-| Setting | Default | Description |
-| --- | --- | --- |
-| `strict` | `false` | If `true`, will validate OpenApi schema and throw exception on error |
-| `controller_prefix` | `""` | Prefix `operationId` when creating controller class name |
-| `controller_method` | `false` | Add current HTTP method (get, put, etc) if not specified in schema |
-
 
 # Documentation
 
 [Basics](docs/Basics.md)
+[Settings](docs/Settings.md)
+[Extras](docs/Extras.md)
 
 
 ## Versions
