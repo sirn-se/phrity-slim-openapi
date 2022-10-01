@@ -7,7 +7,7 @@ The OpenApi Slim adapter supports request and response validation through [Leaug
 When used, it will validate a request and/or response against the OpenApi specification.
 
 
-## Manual request validation
+## Manual validation
 
 To expose the validators, create the OpenApi adapter with setting `route_bind` set to true.
 This will enable a Controller to access functions on the adapter framework.
@@ -23,23 +23,45 @@ $openapi->route($slim);
 $slim->run();
 ```
 
+### Request validation
+
 PHP controller code
 ```php
-use Psr\Http\Message\{
-    ServerRequestInterface as Request,
-    ResponseInterface as Response
-};
-
 class MyController
 {
     public function post(Request $request, Response $response, array $arguments)
     {
         // Get the OpenApi route instance bound to this request
         $route = $request->getAttribute('openapi-route');
+
         // Call the validator - will throw exception on validation failure
         $route->validateRequest($request);
+
+        // Do things with $response
 
         return $response;
     }
 }
 ```
+
+### Response validation
+
+PHP controller code
+```php
+class MyController
+{
+    public function post(Request $request, Response $response, array $arguments)
+    {
+        // Get the OpenApi route instance bound to this request
+        $route = $request->getAttribute('openapi-route');
+
+        // Do things with $response
+
+        // Call the validator - will throw exception on validation failure
+        $route->validateResponse($response);
+
+        return $response;
+    }
+}
+```
+

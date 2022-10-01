@@ -2,6 +2,7 @@
 
 namespace Test;
 
+use Phrity\Slim\FactoryTrait;
 use Psr\Http\Message\{
     ServerRequestInterface as Request,
     ResponseInterface as Response
@@ -9,6 +10,8 @@ use Psr\Http\Message\{
 
 class ValidatingController
 {
+    use FactoryTrait;
+
     /**
      * Request method called by Slim.
      * @param Request $request
@@ -20,8 +23,11 @@ class ValidatingController
     {
         $route = $request->getAttribute('openapi-route');
         $route->validateRequest($request);
-
-        $response->getBody()->write("ValidatingController::get={$route}");
+        $data = json_decode($request->getBody()->__toString());
+        $data->route = "ValidatingController::get={$route}";
+        $response->getBody()->write(json_encode($data));
+        $response = $response->withHeader('Content-Type', 'application/json');
+        $route->validateResponse($response);
         return $response;
     }
 }

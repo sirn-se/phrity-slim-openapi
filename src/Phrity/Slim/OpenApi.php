@@ -12,6 +12,7 @@ use cebe\openapi\Reader;
 use IteratorAggregate;
 use League\OpenAPIValidation\PSR7\{
     ValidatorBuilder,
+    ResponseValidator,
     RoutedServerRequestValidator
 };
 use RuntimeException;
@@ -95,10 +96,20 @@ class OpenApi implements IteratorAggregate
 
     public function getRequestValidator(): RoutedServerRequestValidator
     {
+        return $this->getValidatorBuilder()->getRoutedRequestValidator();
+    }
+
+    public function getResponseValidator(): ResponseValidator
+    {
+        return $this->getValidatorBuilder()->getResponseValidator();
+    }
+
+    private function getValidatorBuilder(): ValidatorBuilder
+    {
         if (empty($this->validation_builder)) {
             $this->validation_builder = (new ValidatorBuilder())->fromSchema($this->openapi);
         }
-        return $this->validation_builder->getRoutedRequestValidator();
+        return $this->validation_builder;
     }
 
     /**

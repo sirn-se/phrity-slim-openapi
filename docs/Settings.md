@@ -52,7 +52,7 @@ See [example](Basics.md#using-class-prefix).
 ### `route_bind`
 
 Will attach corresponding OpenApi route as a request attribute.
-It can then be access in your controller as `openapi-route`.
+It can then be accessed in your controller as `openapi-route`.
 
 ```php
 class MyController

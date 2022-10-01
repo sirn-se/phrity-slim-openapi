@@ -44,7 +44,7 @@ $openapi = new OpenApi('openapi.yaml');
 ```
 ```php
 $schema = cebe\openapi\Reader::readFromJsonFile('openapi.json');
-$openapi = new OpenApi('openapi.json');
+$openapi = new OpenApi($schema);
 ```
 
 Call results per operation

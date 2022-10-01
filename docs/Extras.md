@@ -36,7 +36,7 @@ use Psr\Container\ContainerInterface;
 use Slim\Factory\AppFactory;
 
 $container = new Container();
-$container->set('MyContainerKey', function (ContainerInterface $container) {
+$container->set('MyContainerKey1', function (ContainerInterface $container) {
     return new \Test\MyController($container);
 });
 

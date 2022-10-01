@@ -9,7 +9,10 @@ namespace Phrity\Slim;
 
 use cebe\openapi\spec\Operation;
 use League\OpenAPIValidation\PSR7\OperationAddress;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\{
+    ResponseInterface as Response,
+    ServerRequestInterface as Request
+};
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\App;
 
@@ -67,6 +70,14 @@ class Route
     public function validateRequest(Request $request): void
     {
         $this->openapi->getRequestValidator()->validate(
+            new OperationAddress($this->path, $this->method),
+            $request
+        );
+    }
+
+    public function validateResponse(Response $request): void
+    {
+        $this->openapi->getResponseValidator()->validate(
             new OperationAddress($this->path, $this->method),
             $request
         );
