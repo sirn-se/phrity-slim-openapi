@@ -33,11 +33,13 @@ class OpenApi implements IteratorAggregate
         'controller_method' => false,
         'route_bind'        => false,
         'strict'            => false,
+        'validate_request'  => false,
+        'validate_response' => false,
     ];
 
     /**
      * Constructor for Slim OpenApi route generator.
-     * @param OpenApi|string $source        File path to OpenApi schema or OpenApi instance
+     * @param OpenApiSpec|string $source        File path to OpenApi schema or OpenApi instance
      * @param array<string,mixed> $settings Optional settings
      */
     public function __construct($source, array $settings = [])
@@ -114,7 +116,7 @@ class OpenApi implements IteratorAggregate
 
     /**
      * Read OpenApi source from json or yaml file.
-     * @param OpenApi|string $source        File path to OpenApi schema or OpenApi instance
+     * @param OpenApiSpec|string $source    File path to OpenApi schema or OpenApi instance
      * @return OpenApiSpec                  OpenApi specification
      */
     private function readSpec($source): OpenApiSpec
@@ -122,15 +124,17 @@ class OpenApi implements IteratorAggregate
         if ($source instanceof OpenApiSpec) {
             return $source; // Already parsed
         }
-        if (!is_readable($source)) {
-            throw new RuntimeException("Source file {$source} do not exist or is not readable");
-        }
-        switch (pathinfo($source, PATHINFO_EXTENSION)) {
-            case 'json':
-                return Reader::readFromJsonFile($source);
-            case 'yml':
-            case 'yaml':
-                return Reader::readFromYamlFile($source);
+        if (is_string($source)) {
+            if (!is_readable($source)) {
+                throw new RuntimeException("Source file {$source} do not exist or is not readable");
+            }
+            switch (pathinfo($source, PATHINFO_EXTENSION)) {
+                case 'json':
+                    return Reader::readFromJsonFile($source);
+                case 'yml':
+                case 'yaml':
+                    return Reader::readFromYamlFile($source);
+            }
         }
         throw new RuntimeException("Could not parse {$source}, invalid file format");
     }

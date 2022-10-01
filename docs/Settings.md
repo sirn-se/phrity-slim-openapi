@@ -11,6 +11,8 @@
 | `controller_prefix` | `string` | `""` |
 | `route_bind` | `boolean` | `false` |
 | `strict` | `boolean` | `false` |
+| `validate_request` | `boolean` | `false` |
+| `validate_response` | `boolean` | `false` |
 
 ## How to use
 
@@ -70,3 +72,18 @@ class MyController
 
 Will validate OpenApi schema when loaded, and throw `RuntimeException` if schema is invalid.
 
+
+### `validate_request`
+
+Will add middleware that validates incoming Request, and throws Exception if invalid.
+
+
+See [example](Validation.md#middleware-validation).
+
+
+### `validate_response`
+
+Will add middleware that validates outgoing Response, and throws Exception if invalid.
+
+
+See [example](Validation.md#middleware-validation).

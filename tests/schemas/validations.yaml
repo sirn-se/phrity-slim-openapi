@@ -59,6 +59,34 @@ paths:
               schema:
                 type: string
                 format: binary
+    put:
+      summary: Put data
+      operationId: Test/ValidatingController:put
+      parameters:
+        - name: limit
+          in: query
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SchemaA'
+      responses:
+        200:
+          description: good read
+          content:
+            text/plain:
+              schema:
+                type: string
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaA'
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
 components:
   schemas:
     SchemaA:

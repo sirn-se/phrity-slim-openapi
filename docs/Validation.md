@@ -18,7 +18,9 @@ use Phrity\Slim\OpenApi;
 use Slim\Factory\AppFactory;
 
 $slim = AppFactory::create();
-$openapi = new OpenApi('openapi.json', ['route_bind' => true]);
+$openapi = new OpenApi('openapi.json', [
+    'route_bind' => true,
+]);
 $openapi->route($slim);
 $slim->run();
 ```
@@ -65,3 +67,21 @@ class MyController
 }
 ```
 
+## Middleware validation
+
+By activating certain settings, all requests and responses will be automatically validated against corresponding
+OpenApi schema. You do not need to manually call validation methods, instead these are added as middleware.
+
+PHP router code
+```php
+use Phrity\Slim\OpenApi;
+use Slim\Factory\AppFactory;
+
+$slim = AppFactory::create();
+$openapi = new OpenApi('openapi.json', [
+    'validate_request' => true,
+    'validate_response' => true,
+]);
+$openapi->route($slim);
+$slim->run();
+```

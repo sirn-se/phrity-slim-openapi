@@ -54,14 +54,14 @@ class ValidationTest extends TestCase
         $response = $slim->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $body = $this->testdata;
-        $body['route'] = "ValidatingController::get=/complete/{param1}/{param2}.post > Test\ValidatingController:post";
+        $body['route'] = "ValidatingController::post";
         $this->assertEquals(json_encode($body), $response->getBody()->__toString());
     }
 
     /**
      * Test manual request validation failure
      */
-    public function xxxtestManualRequestValidationFailure(): void
+    public function testManualRequestValidationFailure(): void
     {
         $slim = AppFactory::create();
         $openapi = new OpenApi(__DIR__ . '/schemas/validations.yaml', [
@@ -90,6 +90,76 @@ class ValidationTest extends TestCase
         $openapi->route($slim);
         $stream = self::createStream(json_encode(['invalid' => 'body']));
         $request = self::createServerRequest('POST', '/complete/test/1234');
+        $request = $request->withHeader('X-RequestId', 'abcd');
+        $request = $request->withHeader('Content-Type', 'application/json');
+        $request = $request->withCookieParams(['session_id' => 12345678]);
+        $request = $request->withQueryParams(['limit' => 10, 'filtering' => 'yes']);
+        $request = $request->withBody($stream);
+        // Validation order may change, check for any validation exception
+        $this->expectException('League\OpenAPIValidation\PSR7\Exception\ValidationFailed');
+        $response = $slim->handle($request);
+    }
+
+    /**
+     * Test middleware validation
+     */
+    public function testMiddlewareRequestValidation(): void
+    {
+        $slim = AppFactory::create();
+        $openapi = new OpenApi(__DIR__ . '/schemas/validations.yaml', [
+            'strict' => true,
+            'validate_request' => true,
+            'validate_response' => true,
+        ]);
+        $openapi->route($slim);
+        $stream = self::createStream(json_encode($this->testdata));
+        $request = self::createServerRequest('PUT', '/complete/test/1234');
+        $request = $request->withHeader('X-RequestId', 'abcd');
+        $request = $request->withHeader('Content-Type', 'application/json');
+        $request = $request->withCookieParams(['session_id' => 12345678]);
+        $request = $request->withQueryParams(['limit' => 10, 'filtering' => 'yes']);
+        $request = $request->withBody($stream);
+        $response = $slim->handle($request);
+        $this->assertEquals(200, $response->getStatusCode());
+        $body = $this->testdata;
+        $body['route'] = "ValidatingController::put";
+        $this->assertEquals(json_encode($body), $response->getBody()->__toString());
+    }
+
+    /**
+     * Test middleware request validation failure
+     */
+    public function testMiddlewareRequestValidationFailure(): void
+    {
+        $slim = AppFactory::create();
+        $openapi = new OpenApi(__DIR__ . '/schemas/validations.yaml', [
+            'strict' => true,
+            'validate_request' => true,
+            'validate_response' => true,
+        ]);
+        $openapi->route($slim);
+        $stream = self::createStream(json_encode($this->testdata));
+        $request = self::createServerRequest('PUT', '/complete/test/1234');
+        $request = $request->withBody($stream);
+        // Validation order may change, check for any validation exception
+        $this->expectException('League\OpenAPIValidation\PSR7\Exception\ValidationFailed');
+        $response = $slim->handle($request);
+    }
+
+    /**
+     * Test middleware response validation failure
+     */
+    public function testMiddlewareResponseValidationFailure(): void
+    {
+        $slim = AppFactory::create();
+        $openapi = new OpenApi(__DIR__ . '/schemas/validations.yaml', [
+            'strict' => true,
+            'validate_request' => true,
+            'validate_response' => true,
+        ]);
+        $openapi->route($slim);
+        $stream = self::createStream(json_encode(['invalid' => 'body']));
+        $request = self::createServerRequest('PUT', '/complete/test/1234');
         $request = $request->withHeader('X-RequestId', 'abcd');
         $request = $request->withHeader('Content-Type', 'application/json');
         $request = $request->withCookieParams(['session_id' => 12345678]);

@@ -65,6 +65,19 @@ class Route
                 return $handler->handle($request->withAttribute('openapi-route', $this));
             });
         }
+        if ($this->openapi->getSetting('validate_request')) {
+            $slim_route->add(function (Request $request, RequestHandler $handler) {
+                $this->validateRequest($request);
+                return $handler->handle($request);
+            });
+        }
+        if ($this->openapi->getSetting('validate_response')) {
+            $slim_route->add(function (Request $request, RequestHandler $handler) {
+                $response = $handler->handle($request);
+                $this->validateResponse($response);
+                return $response;
+            });
+        }
     }
 
     public function validateRequest(Request $request): void
@@ -75,11 +88,11 @@ class Route
         );
     }
 
-    public function validateResponse(Response $request): void
+    public function validateResponse(Response $response): void
     {
         $this->openapi->getResponseValidator()->validate(
             new OperationAddress($this->path, $this->method),
-            $request
+            $response
         );
     }
 

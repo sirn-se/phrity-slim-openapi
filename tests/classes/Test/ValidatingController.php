@@ -24,10 +24,20 @@ class ValidatingController
         $route = $request->getAttribute('openapi-route');
         $route->validateRequest($request);
         $data = json_decode($request->getBody()->__toString());
-        $data->route = "ValidatingController::get={$route}";
+        $data->route = "ValidatingController::post";
         $response->getBody()->write(json_encode($data));
         $response = $response->withHeader('Content-Type', 'application/json');
         $route->validateResponse($response);
+        return $response;
+    }
+
+    public function put(Request $request, Response $response, array $arguments)
+    {
+        $route = $request->getAttribute('openapi-route');
+        $data = json_decode($request->getBody()->__toString());
+        $data->route = "ValidatingController::put";
+        $response->getBody()->write(json_encode($data));
+        $response = $response->withHeader('Content-Type', 'application/json');
         return $response;
     }
 }
