@@ -10,6 +10,10 @@ namespace Phrity\Slim;
 use cebe\openapi\spec\OpenApi as OpenApiSpec;
 use cebe\openapi\Reader;
 use IteratorAggregate;
+use League\OpenAPIValidation\PSR7\{
+    ValidatorBuilder,
+    RoutedServerRequestValidator
+};
 use RuntimeException;
 use Slim\App;
 use Traversable;
@@ -21,21 +25,23 @@ use Traversable;
 class OpenApi implements IteratorAggregate
 {
     private OpenApiSpec $openapi;
+    private ValidatorBuilder $validation_builder;
     private object $settings;
     private static array $defaultsettings = [
-        'strict' => false,
         'controller_prefix' => '',
         'controller_method' => false,
+        'route_bind'        => false,
+        'strict'            => false,
     ];
 
     /**
      * Constructor for Slim OpenApi route generator.
-     * @param string $file                  File path to OpenApi schema
+     * @param OpenApi|string $source        File path to OpenApi schema or OpenApi instance
      * @param array<string,mixed> $settings Optional settings
      */
-    public function __construct(string $file, array $settings = [])
+    public function __construct($source, array $settings = [])
     {
-        $this->openapi = $this->readFile($file);
+        $this->openapi = $this->readSpec($source);
         $this->settings = (object)array_merge(self::$defaultsettings, $settings);
         if ($this->settings->strict && !$this->openapi->validate()) {
             throw new RuntimeException(implode(', ', $this->openapi->getErrors()));
@@ -60,7 +66,7 @@ class OpenApi implements IteratorAggregate
                         }
                         continue; // Unusable
                     }
-                    yield new Route($this->settings, $path, $method, $operation->operationId);
+                    yield new Route($this, $path, $method, $operation);
                 }
             }
         })();
@@ -78,22 +84,43 @@ class OpenApi implements IteratorAggregate
     }
 
     /**
+     * Get a setting.
+     * @param string $key                   Setting key
+     * @return mixed                        Setting value
+     */
+    public function getSetting(string $key)
+    {
+        return isset($this->settings->$key) ? $this->settings->$key : null;
+    }
+
+    public function getRequestValidator(): RoutedServerRequestValidator
+    {
+        if (empty($this->validation_builder)) {
+            $this->validation_builder = (new ValidatorBuilder)->fromSchema($this->openapi);
+        }
+        return $this->validation_builder->getRoutedRequestValidator();
+    }
+
+    /**
      * Read OpenApi source from json or yaml file.
-     * @param string $file                  File path to OpenApi schema
+     * @param OpenApi|string $source        File path to OpenApi schema or OpenApi instance
      * @return OpenApiSpec                  OpenApi specification
      */
-    private function readFile(string $file): OpenApiSpec
+    private function readSpec($source): OpenApiSpec
     {
-        if (!is_readable($file)) {
-            throw new RuntimeException("Source file {$file} do not exist or is not readable");
+        if ($source instanceof OpenApiSpec) {
+            return $source; // Already parsed
         }
-        switch (pathinfo($file, PATHINFO_EXTENSION)) {
+        if (!is_readable($source)) {
+            throw new RuntimeException("Source file {$source} do not exist or is not readable");
+        }
+        switch (pathinfo($source, PATHINFO_EXTENSION)) {
             case 'json':
-                return Reader::readFromJsonFile($file);
+                return Reader::readFromJsonFile($source);
             case 'yml':
             case 'yaml':
-                return Reader::readFromYamlFile($file);
+                return Reader::readFromYamlFile($source);
         }
-        throw new RuntimeException("Could not parse {$file}, invalid file format");
+        throw new RuntimeException("Could not parse {$source}, invalid file format");
     }
 }

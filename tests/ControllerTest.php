@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Phrity\Slim;
 
+use cebe\openapi\Reader;
 use PHPUnit\Framework\TestCase;
 use Phrity\Slim\OpenApi;
 
@@ -114,6 +115,7 @@ class ControllerTest extends TestCase
             '/test.put > Test\\MyController:custom',
             '/argument/{arg_1}/{arg_2}.get > Test\MyController:argument',
             '/arguments/{arg_1}/{arg_2}.get > Test\MyController:arguments',
+            '/bind.get > Test\MyController:bind',
         ], $routes);
     }
 
@@ -133,11 +135,30 @@ class ControllerTest extends TestCase
     }
 
     /**
-     * Test a schema with prefix and auto methods
+     * Test a schema with prefix and auto methods loaded from Yaml file
      */
     public function testYaml(): void
     {
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.yaml');
+        $routes = [];
+        foreach ($openapi as $route) {
+            $routes[] = "{$route}";
+        }
+        $this->assertEquals([
+            '/test.get > Test\\MyController',
+            '/test.put > Test\\MyController:put',
+            '/another.get > Test\\YourController',
+            '/another.put > Test\\YourController',
+        ], $routes);
+    }
+
+    /**
+     * Test a schema with prefix and auto methods with pre-parsed schema
+     */
+    public function testOpenApiSpec(): void
+    {
+        $spec = Reader::readFromJsonFile(__DIR__ . '/schemas/openapi-1.json');
+        $openapi = new OpenApi($spec);
         $routes = [];
         foreach ($openapi as $route) {
             $routes[] = "{$route}";

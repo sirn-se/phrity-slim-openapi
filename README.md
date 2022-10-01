@@ -68,6 +68,7 @@ If no method is specified, class method `__invoke()` will be called on class.
 
 - [Basics](docs/Basics.md)
 - [Settings](docs/Settings.md)
+- [Validation](docs/Validation.md) •
 - [Extras](docs/Extras.md)
 
 
@@ -75,5 +76,6 @@ If no method is specified, class method `__invoke()` will be called on class.
 
 | Version | PHP | |
 | --- | --- | --- |
+| `1.2` | `^7.4\|^8.0` | Request/Response validation, YAML support |
 | `1.1` | `^7.4\|^8.0` | Settings & helpers |
 | `1.0` | `^7.4\|^8.0` | Route registry |

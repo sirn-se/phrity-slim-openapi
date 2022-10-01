@@ -1,0 +1,337 @@
+{
+    "openapi": "3.0.0",                                             /# required #/
+    "info": {                                                       /# required, Info object #/
+        "title": "Complete schema",                                 /# required #/
+        "summary": "A complete schema for testing purpose",
+        "description": "A complete schema for testing purpose",
+        "termsOfService": "https://github.com/sirn-se/phrity-slim-openapi#terms",
+        "contact": {
+            "name": "Phrity team",
+            "url": "https://phrity.sirn.se",
+            "email": "sirn@sirn.se"
+        },
+        "license": {
+            "name": "MIT",                                          /# required #/
+            "identifier": "",
+            "url": "https://github.com/sirn-se/phrity-slim-openapi#licence"
+        },
+        "version": "1.0.0"                                          /# required #/
+    },
+    "jsonSchemaDialect": "https://spec.openapis.org/oas/3.1/dialect/base",
+    "servers": [                                                    /# [Server] objects #/
+        {
+            "url": "https://test.org/server/1",
+            "description": "Test server",
+            "variables": {
+                "custom_1": {
+                    "default": "a",                                 /# required #/
+                    "enum": ["a", "b"],
+                    "description": "A custom server variable"
+                }
+            }
+        },
+        {
+            "url": "https://prod.org/server/1",
+            "description": "Production server",
+            "variables": []
+        }
+    ],
+    "paths": {                                                      /# Paths object #/
+        "/test/{id}": {
+            "$ref": "#/components/pathItems/test",
+            "summary": "A specific test",
+            "description": "A specific test",
+            "get": {
+                "tags": ["a", "b"],
+                "summary": "Get a test",
+                "description": "Get a test",
+                "externalDocs": {
+                    "description": "Some docs",
+                    "url": "https://github.com/sirn-se/phrity-util-numerics/actions"    /# required #/
+                },
+                "operationId": "Test/MyController",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID of pet to use",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "style": "simple"
+                    }
+                ],
+                "requestBody": {
+                    "description": "A description",
+                    "content": {                                    /# required #/
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "description": "Updated name of the pet",
+                                        "type": "string"
+                                    },
+                                    "status": {
+                                        "description": "Updated status of the pet",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["status"]
+                            },
+                            "example": "Example",
+                            "examples": {
+                                "cat" : {
+                                    "summary": "An example of a cat",
+                                    "value": {
+                                        "name": "Fluffy",
+                                        "petType": "Cat",
+                                        "color": "White",
+                                        "gender": "male",
+                                        "breed": "Persian"
+                                    }
+                                }
+                            },
+                            "encoding": {
+                                "a": {
+                                    "contentType": "",
+                                    "headers": {
+                                    },
+                                    "style": "",
+                                    "explode": false,
+                                    "allowReserved": false
+                                }
+                            }
+                        }
+                    },
+                    "required": false
+                },
+                "responses": {
+                    "200": {
+                        "description": "A list of pets.",
+                        "headers": {
+                            "X-Rate-Limit-Limit": {
+                                "description": "The number of allowed requests in the current period",
+                                "schema": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$schema": "",
+                                    "description": "",
+                                    "format": "",
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/test"
+                                    },
+                                    "discriminator": {
+                                        "propertyName": ""
+                                    },
+                                    "xml": {
+                                    },
+                                    "externalDocs": {
+                                        "url": ""
+                                    },
+                                    "example": ""
+                                }
+                            },
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/test"
+                                    }
+                                }
+                            }
+                        },
+                        "links": {         /# redirect, sub delegation? #/
+                            "a": {
+                                "operationRef": "",
+                                "operationId": "",
+                                "parameters": {
+
+                                },
+                                "requestBody": "",
+                                "description": "",
+                                "server": {
+                                    "url": ""
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "description": "Method Not Allowed",
+                        "content": {
+                            "application/json": {},
+                            "application/xml": {}
+                        }
+                    },
+                    "default": {
+                        "description": "A list of pets."
+                    }
+                },
+                "callbacks": [],
+                "deprecated": false,
+                "security": [
+                    {
+                        "petstore_auth": [
+                            "write:pets",
+                            "read:pets"
+                        ]
+                    }
+                ],
+                "servers": []
+            },
+            "put": {
+                "description": "update a test",
+                "operationId": "Test/MyController:put",
+                "responses": {}
+            },
+            "post": {
+                "responses": {}
+            },
+            "delete": {
+                "responses": {}
+            },
+            "options": {
+                "responses": {}
+            },
+            "head": {
+                "responses": {}
+            },
+            "patch": {
+                "responses": {}
+            },
+            "trace": {
+                "responses": {}
+            },
+            "servers": [],
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",           /# path, query, header, cookie - required #/
+                    "description": "ID of pet to use",
+                    "required": true,
+                    "deprecated": false,
+                    "allowEmptyValue": false,
+
+                    "style": "simple",      /# matrix, label, form, simple, spaceDelimited, pipeDelimited, deepObject #/
+                    "explode": false,
+                    "allowReserved": false,
+                    "schema": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "example": "Whatever",
+                    "examples": [
+
+                    ],
+                    "content": [
+
+                    ]
+                }
+            ]
+        },
+        "/test": {
+            "get": {
+                "description": "Get all tests",
+                "operationId": "Test\\YourController",
+                "responses": {}
+            }
+        }
+    },
+    "webhooks": "Map[string, Path Item Object | Reference Object] ]",
+    "components": {                                                 /# Components object #/
+        "schemas": {                                                /# Schema objects #/
+            "GeneralError": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "responses": {                                              /# Response objects #/
+            "NotFound": {
+                "description": "Entity not found."
+            },
+            "GeneralError": {
+                "description": "General Error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/GeneralError"
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {                                             /# Parameter objects #/
+            "skipParam": {
+                "name": "skip",
+                "in": "query",
+                "description": "number of items to skip",
+                "required": true,
+                "schema": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            }
+        },
+        "examples": {                                               /# Example objects #/
+        },
+        "requestBodies": {                                          /# Request Body objects #/
+        },
+        "headers": {                                                /# Header objects #/
+        },
+        "securitySchemes": {                                        /# Secureity schema objects #/
+            "api_key": {
+                "type": "apiKey",
+                "name": "api_key",
+                "in": "header"
+            },
+            "petstore_auth": {
+                "type": "oauth2",
+                "flows": {
+                    "implicit": {
+                        "authorizationUrl": "https://example.org/api/oauth/dialog",
+                        "scopes": {
+                            "write:pets": "modify pets in your account",
+                            "read:pets": "read your pets"
+                        }
+                    }
+                 }
+            }
+        },
+        "links": {                                                  /# Link objects #/
+        },
+        "callbacks": {                                              /# Callback objects #/
+        },
+        "pathItems": {                                              /# Path Item objects #/
+        }
+    },
+    "security": {                                                   /# [Security Requirement] objects #/
+    },
+    "tags": {                                                       /# [Tag] objects #/
+    },
+    "externalDocs": {                                               /# External Documentation object #/
+        "url": "https://github.com/sirn-se/phrity-slim-openapi"     /# required #/
+    }
+}
+
+
+

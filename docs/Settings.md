@@ -1,6 +1,6 @@
 # Settings
 
-[Basics](Basics.md) • Settings • [Extras](Extras.md)
+[Basics](Basics.md) • Settings • [Validation](Validation.md) • [Extras](Extras.md)
 
 
 ## Available settings
@@ -25,6 +25,8 @@ $openapi = new OpenApi('openapi.json', [
     'controller_prefix' => "Test/",
     'controller_method' => true,
 ]);
+$openapi->route($slim);
+$slim->run();
 ```
 
 ## Description

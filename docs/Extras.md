@@ -1,6 +1,6 @@
 # Extras
 
-[Basics](Basics.md) • [Settings](Settings.md) • Extras
+[Basics](Basics.md) • [Settings](Settings.md) • [Validation](Validation.md) • Extras
 
 ## Using Slim with Container
 
@@ -18,10 +18,10 @@ If a Container is used, it will always be passed to controller constructor.
     "paths": {
         "/test": {
             "get": {
-                "operationId": "MyContainerController"
+                "operationId": "MyContainerKey1"
             },
             "put": {
-                "operationId": "test/MyController"
+                "operationId": "MyContainerKey2"
             }
         }
     }
@@ -36,11 +36,14 @@ use Psr\Container\ContainerInterface;
 use Slim\Factory\AppFactory;
 
 $container = new Container();
-$container->set('MyContainerController', function (ContainerInterface $container) {
-    return new \Test\ContainerController($container);
+$container->set('MyContainerKey', function (ContainerInterface $container) {
+    return new \Test\MyController($container);
 });
+
 $slim = AppFactory::create(null, $container);
 $openapi = new OpenApi('openapi.json');
+$openapi->route($slim);
+$slim->run();
 ```
 
 Call results per operation
@@ -60,7 +63,6 @@ PUT /test
 ## DIY
 
 If you want to add routes to Slim yourself, you can traverse OpenApi to get all routes defined in schema.
-
 ```php
 use Phrity\Slim\OpenApi;
 use Slim\Factory\AppFactory;
@@ -72,5 +74,19 @@ foreach ($openapi as $route) {
     // $my_callable may be a function or Slim compatible class/method reference
     $slim_route = call_user_func([$slim, $route->method], $route->path, $my_callable);
 }
+$slim->run();
 ```
 
+Or you can use the returned Route instance to attach it to Slim.
+```php
+use Phrity\Slim\OpenApi;
+use Slim\Factory\AppFactory;
+
+$slim = AppFactory::create();
+$openapi = new OpenApi('openapi.json');
+
+foreach ($openapi as $route) {
+    $route->rounte($slim);
+}
+$slim->run();
+```

@@ -26,6 +26,12 @@
                 "operationId": "MyController:arguments",
                 "responses": {}
             }
+        },
+        "/bind": {
+            "get": {
+                "operationId": "MyController:bind",
+                "responses": {}
+            }
         }
     }
 }

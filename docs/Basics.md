@@ -1,9 +1,9 @@
 # Basics
 
-Basics • [Settings](Settings.md) • [Extras](Extras.md)
+Basics • [Settings](Settings.md) • [Validation](Validation.md) • [Extras](Extras.md)
 
 
-## Basic operation using JSON source
+## Basic operation
 
 The `operationId` may or may not define method to call on class. If not specified, `__invoke()` will be called.
 
@@ -35,44 +35,16 @@ $openapi->route($slim);
 $slim->run();
 ```
 
-Call results per operation
-```
-GET /test
+Constructor accepts OpenApi spcification as JSON, YAML or a [pre-parsed schema](https://github.com/cebe/php-openapi#reading-api-description-files).
+```php
+$openapi = new OpenApi('openapi.json');
 ```
 ```php
-(new Test\\MyController())->__invoke(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
-```
-```
-PUT /test
-```
-```php
-(new Test\\MyController())->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
-```
-
-## Basic operation using YAML source
-
-The `operationId` may or may not define method to call on class. If not specified, `__invoke()` will be called.
-
-`openapi.yaml` source
-```yaml
-openapi: "3.0.0"
-paths:
-    /test:
-        get:
-            operationId: "Test/MyController"
-        put:
-            operationId: "Test/MyController:put"
-```
-
-PHP code
-```php
-use Phrity\Slim\OpenApi;
-use Slim\Factory\AppFactory;
-
-$slim = AppFactory::create();
 $openapi = new OpenApi('openapi.yaml');
-$openapi->route($slim);
-$slim->run();
+```
+```php
+$schema = cebe\openapi\Reader::readFromJsonFile('openapi.json');
+$openapi = new OpenApi('openapi.json');
 ```
 
 Call results per operation
@@ -88,6 +60,7 @@ PUT /test
 ```php
 (new Test\\MyController())->put(ServerRequestInterface $request, ResponseInterface $response, array $attributes): ResponseInterface
 ```
+
 
 ## Using class prefix
 

@@ -7,6 +7,10 @@
 
 namespace Phrity\Slim;
 
+use cebe\openapi\spec\Operation;
+use League\OpenAPIValidation\PSR7\OperationAddress;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\App;
 
 /**
@@ -14,22 +18,22 @@ use Slim\App;
  */
 class Route
 {
-    private object $settings;
+    private OpenApi $openapi;
     private string $path;
     private string $method;
-    private string $operation;
+    private Operation $operation;
     private string $controller;
 
     /**
      * Constructor Route instance.
-     * @param object $settings  Optional settings
-     * @param string $path      Route path
-     * @param string $method    Route method
-     * @param string $operation Route operation
+     * @param OpenApi $openapi      Backlink to OpenApi instance
+     * @param string $path          Route path
+     * @param string $method        Route method
+     * @param Operation $operation  Route operation
      */
-    public function __construct(object $settings, string $path, string $method, string $operation)
+    public function __construct(OpenApi $openapi, string $path, string $method, Operation $operation)
     {
-        $this->settings = $settings;
+        $this->openapi = $openapi;
         $this->path = $path;
         $this->method = $method;
         $this->operation = $operation;
@@ -52,7 +56,20 @@ class Route
     public function route(App $app): void
     {
         $slim_route = call_user_func([$app, $this->method], $this->path, $this->controller);
-        $slim_route->setName($this->operation);
+        $slim_route->setName($this->operation->operationId);
+        if ($this->openapi->getSetting('route_bind')) {
+            $slim_route->add(function (Request $request, RequestHandler $handler) {
+                return $handler->handle($request->withAttribute('openapi-route', $this));
+            });
+        }
+    }
+
+    public function validateRequest(Request $request): void
+    {
+        $this->openapi->getRequestValidator()->validate(
+            new OperationAddress($this->path, $this->method),
+            $request
+        );
     }
 
     /**
@@ -60,8 +77,10 @@ class Route
      */
     private function buildController(): void
     {
-        $op = "{$this->settings->controller_prefix}{$this->operation}";
-        if ($this->settings->controller_method && preg_match('/(:[a-z]*)$/', $this->operation) == 0) {
+        $controller_prefix = $this->openapi->getSetting('controller_prefix');
+        $controller_method = $this->openapi->getSetting('controller_method');
+        $op = "{$controller_prefix}{$this->operation->operationId}";
+        if ($controller_method && preg_match('/(:[a-z]*)$/', $this->operation->operationId) == 0) {
             $op .= ":" . strtolower($this->method);
         }
         $this->controller = str_replace('/', "\\", $op);

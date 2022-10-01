@@ -61,4 +61,18 @@ class MyController
         $response->getBody()->write("MyController::arguments={$arg_1},{$arg_2}");
         return $response;
     }
+
+    /**
+     * Request method called by Slim.
+     * @param Request $request
+     * @param Response $response
+     * @param array<string,string> $arguments
+     * @return Response
+     */
+    public function bind(Request $request, Response $response, array $arguments)
+    {
+        $route = $request->getAttribute('openapi-route');
+        $response->getBody()->write("MyController::bind={$route}");
+        return $response;
+    }
 }

@@ -10,7 +10,6 @@ declare(strict_types=1);
 namespace Phrity\Slim;
 
 use DI\Container;
-use GuzzleHttp\Psr7\ServerRequest;
 use PHPUnit\Framework\TestCase;
 use Phrity\Slim\OpenApi;
 use Psr\Container\ContainerInterface;
@@ -22,6 +21,8 @@ use Slim\Handlers\Strategies\RequestResponseArgs;
  */
 class RoutingTest extends TestCase
 {
+    use FactoryTrait;
+
     /**
      * Set up for all tests
      */
@@ -39,12 +40,12 @@ class RoutingTest extends TestCase
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['strict' => true]);
         $openapi->route($slim);
 
-        $request = new ServerRequest('GET', '/test');
+        $request = self::createServerRequest('GET', '/test');
         $response = $slim->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals("MyController::__invoke", $response->getBody()->__toString());
 
-        $request = new ServerRequest('PUT', '/test');
+        $request = self::createServerRequest('PUT', '/test');
         $response = $slim->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals("MyController::put", $response->getBody()->__toString());
@@ -81,7 +82,7 @@ class RoutingTest extends TestCase
         $slim = AppFactory::create();
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['strict' => true]);
         $openapi->route($slim);
-        $request = new ServerRequest('GET', '/unexisting');
+        $request = self::createServerRequest('GET', '/unexisting');
         $this->expectException('Slim\Exception\HttpNotFoundException');
         $this->expectExceptionCode(404);
         $this->expectExceptionMessage('Not found.');
@@ -97,7 +98,7 @@ class RoutingTest extends TestCase
             'controller_prefix' => 'Test/',
         ]);
         $openapi->route($slim);
-        $request = new ServerRequest('GET', '/argument/something/else');
+        $request = self::createServerRequest('GET', '/argument/something/else');
         $response = $slim->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals("MyController::argument=something,else", $response->getBody()->__toString());
@@ -113,7 +114,7 @@ class RoutingTest extends TestCase
             'controller_prefix' => 'Test/',
         ]);
         $openapi->route($slim);
-        $request = new ServerRequest('GET', '/arguments/something/else');
+        $request = self::createServerRequest('GET', '/arguments/something/else');
         $response = $slim->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals("MyController::arguments=something,else", $response->getBody()->__toString());
@@ -128,9 +129,28 @@ class RoutingTest extends TestCase
         $slim = AppFactory::create(null, $container);
         $openapi = new OpenApi(__DIR__ . '/schemas/openapi-container.json', ['strict' => true]);
         $openapi->route($slim);
-        $request = new ServerRequest('GET', '/test');
+        $request = self::createServerRequest('GET', '/test');
         $response = $slim->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals("ContainerController::byContainer", $response->getBody()->__toString());
+    }
+
+    public function testRouteBind(): void
+    {
+        $slim = AppFactory::create();
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-2.json', [
+            'strict' => true,
+            'controller_prefix' => 'Test/',
+            'route_bind' => true,
+        ]);
+        $openapi->route($slim);
+
+        $request = self::createServerRequest('GET', '/bind');
+        $response = $slim->handle($request);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals(
+            "MyController::bind=/bind.get > Test\MyController:bind",
+            $response->getBody()->__toString()
+        );
     }
 }
