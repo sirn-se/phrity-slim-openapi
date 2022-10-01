@@ -13,8 +13,6 @@ use PHPUnit\Framework\TestCase;
 use Phrity\Slim\OpenApi;
 use Slim\Factory\AppFactory;
 
-use League\OpenAPIValidation\PSR7\Exception\ValidationFailed;
-
 /**
  * Slim OpenApi validation test class
  */

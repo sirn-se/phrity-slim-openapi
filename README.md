@@ -6,6 +6,12 @@
 Adapter that reads [OpenApi](https://spec.openapis.org) schema and add included routes to [Slim](https://www.slimframework.com).
 By defining `operationId` in OpenApi schema, the adapter will automatically instanciate and call referenced controller class.
 
+Some features
+- Automatic mapping of routes to controllers
+- OpenApi specification in JSON or YAML source
+- Optional validation of requests and responses
+
+
 ## Installation
 
 Install with [Composer](https://getcomposer.org/);
@@ -68,7 +74,7 @@ If no method is specified, class method `__invoke()` will be called on class.
 
 - [Basics](docs/Basics.md)
 - [Settings](docs/Settings.md)
-- [Validation](docs/Validation.md) •
+- [Validation](docs/Validation.md)
 - [Extras](docs/Extras.md)
 
 

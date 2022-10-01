@@ -7,9 +7,10 @@
 
 | Setting | Type | Default |
 | --- | --- | --- |
-| `strict` | `boolean` | `false` |
-| `controller_prefix` | `string` | `""` |
 | `controller_method` | `boolean` | `false` |
+| `controller_prefix` | `string` | `""` |
+| `route_bind` | `boolean` | `false` |
+| `strict` | `boolean` | `false` |
 
 ## How to use
 
@@ -21,25 +22,16 @@ use Slim\Factory\AppFactory;
 
 $slim = AppFactory::create();
 $openapi = new OpenApi('openapi.json', [
-    'strict' => true,
-    'controller_prefix' => "Test/",
     'controller_method' => true,
+    'controller_prefix' => "Test/",
+    'route_bind' => true,
+    'strict' => true,
 ]);
 $openapi->route($slim);
 $slim->run();
 ```
 
-## Description
-
-### `strict`
-
-Will validate OpenApi schema when loaded, and throw `RuntimeException` if schema is invalid.
-
-### `controller_prefix`
-
-Will prefix `operationId` when mapping container classes. Typically used to hide namespace paths from OpenApi schema.
-
-See [example](Basics.md#using-class-prefix).
+## Descriptions
 
 ### `controller_method`
 
@@ -48,4 +40,33 @@ Standard HTTP methods are `get`, `post`, `put`, `delete`, `head`, `patch` and `o
 If method is defined in schema, this setting will have no effect.
 
 See [example](Basics.md#automatic-method-mapping).
+
+
+### `controller_prefix`
+
+Will prefix `operationId` when mapping container classes. Typically used to hide namespace paths from OpenApi schema.
+
+See [example](Basics.md#using-class-prefix).
+
+
+### `route_bind`
+
+Will attach corresponding OpenApi route as a request attribute.
+It can then be access in your controller as `openapi-route`.
+
+```php
+class MyController
+{
+    public function get($request, $response, array $arguments)
+    {
+        $route = $request->getAttribute('openapi-route');
+        return $response;
+    }
+}
+```
+
+
+### `strict`
+
+Will validate OpenApi schema when loaded, and throw `RuntimeException` if schema is invalid.
 

@@ -86,7 +86,7 @@ $slim = AppFactory::create();
 $openapi = new OpenApi('openapi.json');
 
 foreach ($openapi as $route) {
-    $route->rounte($slim);
+    $route->route($slim);
 }
 $slim->run();
 ```

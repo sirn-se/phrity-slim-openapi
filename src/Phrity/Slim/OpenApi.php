@@ -96,7 +96,7 @@ class OpenApi implements IteratorAggregate
     public function getRequestValidator(): RoutedServerRequestValidator
     {
         if (empty($this->validation_builder)) {
-            $this->validation_builder = (new ValidatorBuilder)->fromSchema($this->openapi);
+            $this->validation_builder = (new ValidatorBuilder())->fromSchema($this->openapi);
         }
         return $this->validation_builder->getRoutedRequestValidator();
     }
