@@ -1,0 +1,29 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Test schema 1",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/test": {
+            "get": {
+                "operationId": "Test/MyController",
+                "responses": {}
+            },
+            "put": {
+                "operationId": "Test/MyController:put",
+                "responses": {}
+            }
+        },
+        "/another": {
+            "get": {
+                "operationId": "Test\\YourController",
+                "responses": {}
+            },
+            "put": {
+                "operationId": "Test\\YourController",
+                "responses": {}
+            }
+        }
+    }
+}

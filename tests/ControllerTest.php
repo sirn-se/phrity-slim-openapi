@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace Phrity\Slim;
 
+use cebe\openapi\Reader;
 use PHPUnit\Framework\TestCase;
 use Phrity\Slim\OpenApi;
 
@@ -25,9 +26,8 @@ class ControllerTest extends TestCase
         error_reporting(-1);
     }
 
-    // Test a simple schema with paths
     /**
-     *
+     * Test a simple schema with paths
      */
     public function testRoutesStrict(): void
     {
@@ -112,8 +112,83 @@ class ControllerTest extends TestCase
         $this->assertEquals([
             '/test.get > Test\\MyController:get',
             '/test.put > Test\\MyController:custom',
-            '/another.get > Test\\YourController:custom',
-            '/another.put > Test\\YourController:put',
+            '/argument/{arg_1}/{arg_2}.get > Test\MyController:argument',
+            '/arguments/{arg_1}/{arg_2}.get > Test\MyController:arguments',
+            '/bind.get > Test\MyController:bind',
         ], $routes);
+    }
+
+    /**
+     * Test container provided controller
+     */
+    public function testContainer(): void
+    {
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-container.json', ['strict' => true]);
+        $routes = [];
+        foreach ($openapi as $route) {
+            $routes[] = "{$route}";
+        }
+        $this->assertEquals([
+            '/test.get > ContainerController:byContainer',
+        ], $routes);
+    }
+
+    /**
+     * Test a schema with prefix and auto methods loaded from Yaml file
+     */
+    public function testYaml(): void
+    {
+        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.yaml');
+        $routes = [];
+        foreach ($openapi as $route) {
+            $routes[] = "{$route}";
+        }
+        $this->assertEquals([
+            '/test.get > Test\\MyController',
+            '/test.put > Test\\MyController:put',
+            '/another.get > Test\\YourController',
+            '/another.put > Test\\YourController',
+        ], $routes);
+    }
+
+    /**
+     * Test a schema with prefix and auto methods with pre-parsed schema
+     */
+    public function testOpenApiSpec(): void
+    {
+        $spec = Reader::readFromJsonFile(__DIR__ . '/schemas/openapi-1.json');
+        $openapi = new OpenApi($spec);
+        $routes = [];
+        foreach ($openapi as $route) {
+            $routes[] = "{$route}";
+        }
+        $this->assertEquals([
+            '/test.get > Test\\MyController',
+            '/test.put > Test\\MyController:put',
+            '/another.get > Test\\YourController',
+            '/another.put > Test\\YourController',
+        ], $routes);
+    }
+
+    /**
+     * Test loading non-existing shema
+     */
+    public function testMissingFile(): void
+    {
+        $file = __DIR__ . '/schemas/unexisting.json';
+        $this->expectException('RuntimeException');
+        $this->expectExceptionMessage("Source file {$file} do not exist or is not readable");
+        $openapi = new OpenApi($file);
+    }
+
+    /**
+     * Test loading invalid file type
+     */
+    public function testInvalidFileType(): void
+    {
+        $file = __DIR__ . '/schemas/invalid-type.txt';
+        $this->expectException('RuntimeException');
+        $this->expectExceptionMessage("Could not parse {$file}, invalid file format");
+        $openapi = new OpenApi($file);
     }
 }
