@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * File for Slim OpenApi tests
+ * @package Phrity > Slim > OpenApi
+ */
+
+declare(strict_types=1);
+
 namespace Test;
 
 use Psr\Container\ContainerInterface;
@@ -8,6 +15,9 @@ use Psr\Http\Message\{
     ResponseInterface as Response
 };
 
+/**
+ * Slim OpenApi test controller
+ */
 class ContainerController
 {
     private ContainerInterface $container;

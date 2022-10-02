@@ -39,7 +39,7 @@ class OpenApi implements IteratorAggregate
 
     /**
      * Constructor for Slim OpenApi route generator.
-     * @param OpenApiSpec|string $source        File path to OpenApi schema or OpenApi instance
+     * @param OpenApiSpec|string $source    File path to OpenApi schema or OpenApi instance
      * @param array<string,mixed> $settings Optional settings
      */
     public function __construct($source, array $settings = [])
@@ -77,7 +77,7 @@ class OpenApi implements IteratorAggregate
 
     /**
      * Register routes on Slim App.
-     * @param \Slim\App $app                Slim App instance to register routes on
+     * @param App $app                      Slim App instance to register routes on
      */
     public function route(App $app): void
     {
@@ -96,16 +96,28 @@ class OpenApi implements IteratorAggregate
         return isset($this->settings->$key) ? $this->settings->$key : null;
     }
 
+    /**
+     * Get request validator.
+     * @return RoutedServerRequestValidator Validator
+     */
     public function getRequestValidator(): RoutedServerRequestValidator
     {
         return $this->getValidatorBuilder()->getRoutedRequestValidator();
     }
 
+    /**
+     * Get response validator.
+     * @return ResponseValidator            Validator
+     */
     public function getResponseValidator(): ResponseValidator
     {
         return $this->getValidatorBuilder()->getResponseValidator();
     }
 
+    /**
+     * Get validator builder.
+     * @return ValidatorBuilder             Builder
+     */
     private function getValidatorBuilder(): ValidatorBuilder
     {
         if (empty($this->validation_builder)) {

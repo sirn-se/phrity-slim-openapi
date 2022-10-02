@@ -26,9 +26,8 @@ class ControllerTest extends TestCase
         error_reporting(-1);
     }
 
-    // Test a simple schema with paths
     /**
-     *
+     * Test a simple schema with paths
      */
     public function testRoutesStrict(): void
     {

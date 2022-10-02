@@ -45,7 +45,7 @@ class Route
 
     /**
      * Get string representation of route.
-     * @return string           String representation of route
+     * @return string               String representation of route
      */
     public function __toString(): string
     {
@@ -54,7 +54,7 @@ class Route
 
     /**
      * Register route on Slim App.
-     * @param \Slim\App $app    Slim App instance to register routes on
+     * @param App $app              Slim App instance to register routes on
      */
     public function route(App $app): void
     {
@@ -80,6 +80,10 @@ class Route
         }
     }
 
+    /**
+     * Validate a request.
+     * @param Request $request      Server request message
+     */
     public function validateRequest(Request $request): void
     {
         $this->openapi->getRequestValidator()->validate(
@@ -88,6 +92,10 @@ class Route
         );
     }
 
+    /**
+     * Validate a response.
+     * @param Response $response     Response message
+     */
     public function validateResponse(Response $response): void
     {
         $this->openapi->getResponseValidator()->validate(

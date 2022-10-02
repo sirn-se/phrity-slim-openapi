@@ -89,6 +89,9 @@ class RoutingTest extends TestCase
         $response = $slim->handle($request);
     }
 
+    /**
+     * Test Slim routing using standard array argument
+     */
     public function testRequestResponse(): void
     {
         $slim = AppFactory::create();
@@ -104,6 +107,9 @@ class RoutingTest extends TestCase
         $this->assertEquals("MyController::argument=something,else", $response->getBody()->__toString());
     }
 
+    /**
+     * Test Slim routing using listed arguments
+     */
     public function testRequestResponseArgs(): void
     {
         $slim = AppFactory::create();
@@ -120,6 +126,9 @@ class RoutingTest extends TestCase
         $this->assertEquals("MyController::arguments=something,else", $response->getBody()->__toString());
     }
 
+    /**
+     * Test Slim routing using container instance for mapping
+     */
     public function testContainer(): void
     {
         $container = new Container();
@@ -135,6 +144,9 @@ class RoutingTest extends TestCase
         $this->assertEquals("ContainerController::byContainer", $response->getBody()->__toString());
     }
 
+    /**
+     * Test binding Route to request
+     */
     public function testRouteBind(): void
     {
         $slim = AppFactory::create();

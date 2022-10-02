@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * File for Slim OpenApi tests
+ * @package Phrity > Slim > OpenApi
+ */
+
+declare(strict_types=1);
+
 namespace Test;
 
 use Phrity\Slim\FactoryTrait;
@@ -8,6 +15,9 @@ use Psr\Http\Message\{
     ResponseInterface as Response
 };
 
+/**
+ * Slim OpenApi test controller
+ */
 class ValidatingController
 {
     use FactoryTrait;
@@ -19,7 +29,7 @@ class ValidatingController
      * @param array<string,string> $arguments
      * @return Response
      */
-    public function post(Request $request, Response $response, array $arguments)
+    public function post(Request $request, Response $response, array $arguments): Response
     {
         $route = $request->getAttribute('openapi-route');
         $route->validateRequest($request);
@@ -31,7 +41,14 @@ class ValidatingController
         return $response;
     }
 
-    public function put(Request $request, Response $response, array $arguments)
+    /**
+     * Request method called by Slim.
+     * @param Request $request
+     * @param Response $response
+     * @param array<string,string> $arguments
+     * @return Response
+     */
+    public function put(Request $request, Response $response, array $arguments): Response
     {
         $route = $request->getAttribute('openapi-route');
         $data = json_decode($request->getBody()->__toString());
