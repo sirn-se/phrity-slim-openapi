@@ -74,6 +74,7 @@ class ValidationTest extends TestCase
         $request = $request->withBody($stream);
         // Validation order may change, check for any validation exception
         $this->expectException('League\OpenAPIValidation\PSR7\Exception\ValidationFailed');
+        $this->expectExceptionMessage('"X-RequestId" for Request [post /complete/{param1}/{param2}]');
         $response = $slim->handle($request);
     }
 
@@ -97,6 +98,7 @@ class ValidationTest extends TestCase
         $request = $request->withBody($stream);
         // Validation order may change, check for any validation exception
         $this->expectException('League\OpenAPIValidation\PSR7\Exception\ValidationFailed');
+        $this->expectExceptionMessage('Body does not match schema for content-type "application/json"');
         $response = $slim->handle($request);
     }
 
@@ -143,6 +145,7 @@ class ValidationTest extends TestCase
         $request = $request->withBody($stream);
         // Validation order may change, check for any validation exception
         $this->expectException('League\OpenAPIValidation\PSR7\Exception\ValidationFailed');
+        $this->expectExceptionMessage('"X-RequestId" for Request [put /complete/{param1}/{param2}]');
         $response = $slim->handle($request);
     }
 
@@ -167,6 +170,27 @@ class ValidationTest extends TestCase
         $request = $request->withBody($stream);
         // Validation order may change, check for any validation exception
         $this->expectException('League\OpenAPIValidation\PSR7\Exception\ValidationFailed');
+        $this->expectExceptionMessage('Body does not match schema for content-type "application/json" ');
+        $response = $slim->handle($request);
+    }
+
+    /**
+     * Test middleware both request and response validation failures
+     */
+    public function testMiddlewareValidationFailures(): void
+    {
+        $slim = AppFactory::create();
+        $openapi = new OpenApi(__DIR__ . '/schemas/validations.yaml', [
+            'strict' => true,
+            'validate_request' => true,
+            'validate_response' => true,
+        ]);
+        $openapi->route($slim);
+        $stream = self::createStream(json_encode(['invalid' => 'body']));
+        $request = self::createServerRequest('PUT', '/complete/test/1234');
+        $request = $request->withBody($stream);
+        $this->expectException('League\OpenAPIValidation\PSR7\Exception\ValidationFailed');
+        $this->expectExceptionMessage('"X-RequestId" for Request [put /complete/{param1}/{param2}]');
         $response = $slim->handle($request);
     }
 }
