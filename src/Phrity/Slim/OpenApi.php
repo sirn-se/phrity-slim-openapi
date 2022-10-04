@@ -137,6 +137,7 @@ class OpenApi implements IteratorAggregate
             return $source; // Already parsed
         }
         if (is_string($source)) {
+            $source = realpath($source) ?: $source;
             if (!is_readable($source)) {
                 throw new RuntimeException("Source file {$source} do not exist or is not readable");
             }

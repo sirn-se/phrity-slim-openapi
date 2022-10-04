@@ -144,7 +144,7 @@ class ValidationTest extends TestCase
         $request = self::createServerRequest('PUT', '/complete/test/1234');
         $request = $request->withBody($stream);
         // Validation order may change, check for any validation exception
-        $this->expectException('League\OpenAPIValidation\PSR7\Exception\ValidationFailed');
+        $this->expectException('Slim\Exception\HttpBadRequestException');
         $this->expectExceptionMessage('"X-RequestId" for Request [put /complete/{param1}/{param2}]');
         $response = $slim->handle($request);
     }
@@ -169,7 +169,7 @@ class ValidationTest extends TestCase
         $request = $request->withQueryParams(['limit' => 10, 'filtering' => 'yes']);
         $request = $request->withBody($stream);
         // Validation order may change, check for any validation exception
-        $this->expectException('League\OpenAPIValidation\PSR7\Exception\ValidationFailed');
+        $this->expectException('Slim\Exception\HttpInternalServerErrorException');
         $this->expectExceptionMessage('Body does not match schema for content-type "application/json" ');
         $response = $slim->handle($request);
     }
@@ -189,7 +189,7 @@ class ValidationTest extends TestCase
         $stream = self::createStream(json_encode(['invalid' => 'body']));
         $request = self::createServerRequest('PUT', '/complete/test/1234');
         $request = $request->withBody($stream);
-        $this->expectException('League\OpenAPIValidation\PSR7\Exception\ValidationFailed');
+        $this->expectException('Slim\Exception\HttpBadRequestException');
         $this->expectExceptionMessage('"X-RequestId" for Request [put /complete/{param1}/{param2}]');
         $response = $slim->handle($request);
     }
