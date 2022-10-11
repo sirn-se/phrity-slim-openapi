@@ -15,6 +15,11 @@ use Psr\Http\Message\{
 };
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\App;
+use Slim\Exception\{
+    HttpBadRequestException,
+    HttpInternalServerErrorException
+};
+use Throwable;
 
 /**
  * Slim OpenApi route instance
@@ -67,14 +72,22 @@ class Route
         }
         if ($this->openapi->getSetting('validate_request')) {
             $slim_route->add(function (Request $request, RequestHandler $handler) {
-                $this->validateRequest($request);
+                try {
+                    $this->validateRequest($request);
+                } catch (Throwable $t) {
+                    throw new HttpBadRequestException($request, $t->getMessage(), $t);
+                }
                 return $handler->handle($request);
             });
         }
         if ($this->openapi->getSetting('validate_response')) {
             $slim_route->add(function (Request $request, RequestHandler $handler) {
                 $response = $handler->handle($request);
-                $this->validateResponse($response);
+                try {
+                    $this->validateResponse($response);
+                } catch (Throwable $t) {
+                    throw new HttpInternalServerErrorException($request, $t->getMessage(), $t);
+                }
                 return $response;
             });
         }
