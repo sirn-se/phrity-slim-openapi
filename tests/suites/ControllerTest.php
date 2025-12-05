@@ -186,7 +186,8 @@ class ControllerTest extends TestCase
      */
     public function testInvalidFileType(): void
     {
-        $file = reaöpath(__DIR__ . '/../schemas/invalid-type.txt');
+        /** @var non-empty-string $file */
+        $file = realpath(__DIR__ . '/../schemas/invalid-type.txt');
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage("Could not parse {$file}, invalid file format");
         $openapi = new OpenApi($file);

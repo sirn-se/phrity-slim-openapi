@@ -20,6 +20,7 @@ class ValidationTest extends TestCase
 {
     use FactoryTrait;
 
+    /** @var array<string, int|string> $testdata */
     private array $testdata = [
         'propA' => 1234,
         'propB' => "A property"
@@ -36,7 +37,7 @@ class ValidationTest extends TestCase
     /**
      * Test manual validation
      */
-    public function xxxtestManualRequestValidation(): void
+    public function testManualRequestValidation(): void
     {
         $slim = AppFactory::create();
         $openapi = new OpenApi(__DIR__ . '/../schemas/validations.yaml', [
@@ -44,7 +45,7 @@ class ValidationTest extends TestCase
             'route_bind' => true,
         ]);
         $openapi->route($slim);
-        $stream = self::createStream(json_encode($this->testdata));
+        $stream = self::createStream(self::jsonEncode($this->testdata));
         $request = self::createServerRequest('POST', '/complete/test/1234');
         $request = $request->withHeader('X-RequestId', 'abcd');
         $request = $request->withHeader('Content-Type', 'application/json');
@@ -61,7 +62,7 @@ class ValidationTest extends TestCase
     /**
      * Test manual request validation failure
      */
-    public function xxxtestManualRequestValidationFailure(): void
+    public function testManualRequestValidationFailure(): void
     {
         $slim = AppFactory::create();
         $openapi = new OpenApi(__DIR__ . '/../schemas/validations.yaml', [
@@ -69,7 +70,7 @@ class ValidationTest extends TestCase
             'route_bind' => true,
         ]);
         $openapi->route($slim);
-        $stream = self::createStream(json_encode($this->testdata));
+        $stream = self::createStream(self::jsonEncode($this->testdata));
         $request = self::createServerRequest('POST', '/complete/test/1234');
         $request = $request->withBody($stream);
         // Validation order may change, check for any validation exception
@@ -81,7 +82,7 @@ class ValidationTest extends TestCase
     /**
      * Test manual response validation failure
      */
-    public function xxxtestManualResponseValidationFailure(): void
+    public function testManualResponseValidationFailure(): void
     {
         $slim = AppFactory::create();
         $openapi = new OpenApi(__DIR__ . '/../schemas/validations.yaml', [
@@ -89,7 +90,7 @@ class ValidationTest extends TestCase
             'route_bind' => true,
         ]);
         $openapi->route($slim);
-        $stream = self::createStream(json_encode(['invalid' => 'body']));
+        $stream = self::createStream(self::jsonEncode(['invalid' => 'body']));
         $request = self::createServerRequest('POST', '/complete/test/1234');
         $request = $request->withHeader('X-RequestId', 'abcd');
         $request = $request->withHeader('Content-Type', 'application/json');
@@ -114,7 +115,7 @@ class ValidationTest extends TestCase
             'validate_response' => true,
         ]);
         $openapi->route($slim);
-        $stream = self::createStream(json_encode($this->testdata));
+        $stream = self::createStream(self::jsonEncode($this->testdata));
         $request = self::createServerRequest('PUT', '/complete/test/1234');
         $request = $request->withHeader('X-RequestId', 'abcd');
         $request = $request->withHeader('Content-Type', 'application/json');
@@ -131,7 +132,7 @@ class ValidationTest extends TestCase
     /**
      * Test middleware request validation failure
      */
-    public function xxxtestMiddlewareRequestValidationFailure(): void
+    public function testMiddlewareRequestValidationFailure(): void
     {
         $slim = AppFactory::create();
         $openapi = new OpenApi(__DIR__ . '/../schemas/validations.yaml', [
@@ -140,7 +141,7 @@ class ValidationTest extends TestCase
             'validate_response' => true,
         ]);
         $openapi->route($slim);
-        $stream = self::createStream(json_encode($this->testdata));
+        $stream = self::createStream(self::jsonEncode($this->testdata));
         $request = self::createServerRequest('PUT', '/complete/test/1234');
         $request = $request->withBody($stream);
         // Validation order may change, check for any validation exception
@@ -152,7 +153,7 @@ class ValidationTest extends TestCase
     /**
      * Test middleware response validation failure
      */
-    public function xxxtestMiddlewareResponseValidationFailure(): void
+    public function testMiddlewareResponseValidationFailure(): void
     {
         $slim = AppFactory::create();
         $openapi = new OpenApi(__DIR__ . '/../schemas/validations.yaml', [
@@ -161,7 +162,7 @@ class ValidationTest extends TestCase
             'validate_response' => true,
         ]);
         $openapi->route($slim);
-        $stream = self::createStream(json_encode(['invalid' => 'body']));
+        $stream = self::createStream(self::jsonEncode(['invalid' => 'body']));
         $request = self::createServerRequest('PUT', '/complete/test/1234');
         $request = $request->withHeader('X-RequestId', 'abcd');
         $request = $request->withHeader('Content-Type', 'application/json');
@@ -169,7 +170,7 @@ class ValidationTest extends TestCase
         $request = $request->withQueryParams(['limit' => 10, 'filtering' => 'yes']);
         $request = $request->withBody($stream);
         // Validation order may change, check for any validation exception
-        $this->expectException('Slim\Exception\HttpBadRequestException');
+        $this->expectException('Slim\Exception\HttpInternalServerErrorException');
         $this->expectExceptionMessage('Body does not match schema for content-type "application/json" ');
         $response = $slim->handle($request);
     }
@@ -177,7 +178,7 @@ class ValidationTest extends TestCase
     /**
      * Test middleware both request and response validation failures
      */
-    public function xxxtestMiddlewareValidationFailures(): void
+    public function testMiddlewareValidationFailures(): void
     {
         $slim = AppFactory::create();
         $openapi = new OpenApi(__DIR__ . '/../schemas/validations.yaml', [
@@ -186,7 +187,7 @@ class ValidationTest extends TestCase
             'validate_response' => true,
         ]);
         $openapi->route($slim);
-        $stream = self::createStream(json_encode(['invalid' => 'body']));
+        $stream = self::createStream(self::jsonEncode($this->testdata));
         $request = self::createServerRequest('PUT', '/complete/test/1234');
         $request = $request->withBody($stream);
         $this->expectException('Slim\Exception\HttpBadRequestException');

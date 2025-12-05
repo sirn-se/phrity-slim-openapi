@@ -9,11 +9,13 @@ namespace Phrity\Slim;
 
 use cebe\openapi\spec\Operation;
 use League\OpenAPIValidation\PSR7\OperationAddress;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\{
     ResponseInterface as Response,
     ServerRequestInterface as Request
 };
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use RuntimeException;
 use Slim\App;
 use Slim\Exception\{
     HttpBadRequestException,
@@ -59,11 +61,14 @@ class Route
 
     /**
      * Register route on Slim App.
-     * @param App $app              Slim App instance to register routes on
+     * @template TContainerInterface of (ContainerInterface|null)
+     * @param App<TContainerInterface> $app Slim App instance to register routes on
      */
     public function route(App $app): void
     {
-        $slim_route = call_user_func([$app, $this->method], $this->path, $this->controller);
+        /** @var callable $callback */
+        $callback = [$app, $this->method];
+        $slim_route = call_user_func($callback, $this->path, $this->controller);
         $slim_route->setName($this->operation->operationId);
         if ($this->openapi->getSetting('route_bind')) {
             $slim_route->add(function (Request $request, RequestHandler $handler) {
@@ -96,6 +101,7 @@ class Route
     /**
      * Validate a request.
      * @param Request $request      Server request message
+     * @throws Throwable
      */
     public function validateRequest(Request $request): void
     {
@@ -108,6 +114,7 @@ class Route
     /**
      * Validate a response.
      * @param Response $response     Response message
+     * @throws Throwable
      */
     public function validateResponse(Response $response): void
     {
