@@ -31,7 +31,7 @@ class ControllerTest extends TestCase
      */
     public function testRoutesStrict(): void
     {
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['strict' => true]);
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-1.json', ['strict' => true]);
         $routes = [];
         foreach ($openapi as $route) {
             $routes[] = "{$route}";
@@ -49,7 +49,7 @@ class ControllerTest extends TestCase
      */
     public function testEmptyNotStrict(): void
     {
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-empty.json');
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-empty.json');
         $routes = [];
         foreach ($openapi as $route) {
             $routes[] = "{$route}";
@@ -64,7 +64,7 @@ class ControllerTest extends TestCase
     {
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('[] OpenApi is missing required property: paths');
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-empty.json', ['strict' => true]);
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-empty.json', ['strict' => true]);
     }
 
     /**
@@ -72,7 +72,7 @@ class ControllerTest extends TestCase
      */
     public function testNoopNotStrict(): void
     {
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json');
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-noop.json');
         $routes = [];
         foreach ($openapi as $route) {
             $routes[] = "{$route}";
@@ -87,7 +87,7 @@ class ControllerTest extends TestCase
      */
     public function testNoopStrict(): void
     {
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json', ['strict' => true]);
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-noop.json', ['strict' => true]);
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('Route /test:put is missing operationId');
         foreach ($openapi as $route) {
@@ -100,7 +100,7 @@ class ControllerTest extends TestCase
      */
     public function testControllerMagic(): void
     {
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-2.json', [
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-2.json', [
             'strict' => true,
             'controller_prefix' => 'Test/',
             'controller_method' => true,
@@ -123,7 +123,7 @@ class ControllerTest extends TestCase
      */
     public function testContainer(): void
     {
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-container.json', ['strict' => true]);
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-container.json', ['strict' => true]);
         $routes = [];
         foreach ($openapi as $route) {
             $routes[] = "{$route}";
@@ -138,7 +138,7 @@ class ControllerTest extends TestCase
      */
     public function testYaml(): void
     {
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.yaml');
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-1.yaml');
         $routes = [];
         foreach ($openapi as $route) {
             $routes[] = "{$route}";
@@ -156,7 +156,7 @@ class ControllerTest extends TestCase
      */
     public function testOpenApiSpec(): void
     {
-        $spec = Reader::readFromJsonFile(__DIR__ . '/schemas/openapi-1.json');
+        $spec = Reader::readFromJsonFile(__DIR__ . '/../schemas/openapi-1.json');
         $openapi = new OpenApi($spec);
         $routes = [];
         foreach ($openapi as $route) {
@@ -175,7 +175,7 @@ class ControllerTest extends TestCase
      */
     public function testMissingFile(): void
     {
-        $file = __DIR__ . '/schemas/unexisting.json';
+        $file = __DIR__ . '/../schemas/unexisting.json';
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage("Source file {$file} do not exist or is not readable");
         $openapi = new OpenApi($file);
@@ -186,7 +186,7 @@ class ControllerTest extends TestCase
      */
     public function testInvalidFileType(): void
     {
-        $file = __DIR__ . '/schemas/invalid-type.txt';
+        $file = reaöpath(__DIR__ . '/../schemas/invalid-type.txt');
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage("Could not parse {$file}, invalid file format");
         $openapi = new OpenApi($file);
