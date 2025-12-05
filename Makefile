@@ -1,41 +1,33 @@
-# Default
-all: deps-install
+install: composer.phar
+	./composer.phar install
 
-
-# DEPENDENCY MANAGEMENT
-
-# Updates dependencies according to lock file
-deps-install: composer.phar
-	./composer.phar --no-interaction install
-
-# Updates dependencies according to json file
-deps-update: composer.phar
+update: composer.phar
 	./composer.phar self-update
-	./composer.phar --no-interaction update
+	./composer.phar update
 
-
-# TESTS AND REPORTS
-
-# Code standard check
-cs-check: composer.lock
-	./vendor/bin/phpcs --standard=PSR1,PSR12 --encoding=UTF-8 --report=full --colors src tests
-
-# Run tests
 test: composer.lock
 	./vendor/bin/phpunit
 
-# Run tests with clover coverage report
-coverage: composer.lock
-	./vendor/bin/phpunit --coverage-clover build/logs/clover.xml
-	./vendor/bin/php-coveralls -v
+cs: composer.lock
+	./vendor/bin/phpcs
 
+stan: composer.lock
+	./vendor/bin/phpstan analyse --memory-limit 256M
 
-# INITIAL INSTALL
+coverage: composer.lock clean-coverage
+	./vendor/bin/phpunit --coverage-clover coverage/clover.xml --coverage-html=coverage -d --min-coverage=100
 
-# Ensures composer is installed
 composer.phar:
-	curl -sS https://getcomposer.org/installer | php
+	curl -s http://getcomposer.org/installer | php
 
-# Ensures composer is installed and dependencies loaded
 composer.lock: composer.phar
 	./composer.phar --no-interaction install
+
+vendor/bin/phpunit: install
+
+clean: clean-coverage
+	rm -f composer.lock
+	rm -rf vendor
+
+clean-coverage:
+	rm -rf coverage

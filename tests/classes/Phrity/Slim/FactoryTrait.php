@@ -37,10 +37,20 @@ trait FactoryTrait
      * Create a server request.
      * @param string $method                HTTP method
      * @param string $path                  Request path
-     * @return StreamInterface              A server request
+     * @return ServerRequestInterface       A server request
      */
     private static function createServerRequest(string $method, string $path): ServerRequestInterface
     {
         return (new ServerRequestFactory())->createServerRequest($method, $path);
+    }
+
+    private static function jsonEncode(mixed $data): string
+    {
+        return json_encode($data, JSON_THROW_ON_ERROR);
+    }
+
+    private static function jsonDecode(string $data): mixed
+    {
+        return json_decode($data, false, 512, JSON_THROW_ON_ERROR);
     }
 }

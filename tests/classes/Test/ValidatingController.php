@@ -33,9 +33,9 @@ class ValidatingController
     {
         $route = $request->getAttribute('openapi-route');
         $route->validateRequest($request);
-        $data = json_decode($request->getBody()->__toString());
+        $data = self::jsonDecode($request->getBody()->__toString());
         $data->route = "ValidatingController::post";
-        $response->getBody()->write(json_encode($data));
+        $response->getBody()->write(self::jsonEncode($data));
         $response = $response->withHeader('Content-Type', 'application/json');
         $route->validateResponse($response);
         return $response;
@@ -51,9 +51,9 @@ class ValidatingController
     public function put(Request $request, Response $response, array $arguments): Response
     {
         $route = $request->getAttribute('openapi-route');
-        $data = json_decode($request->getBody()->__toString());
+        $data = self::jsonDecode($request->getBody()->__toString());
         $data->route = "ValidatingController::put";
-        $response->getBody()->write(json_encode($data));
+        $response->getBody()->write(self::jsonEncode($data));
         $response = $response->withHeader('Content-Type', 'application/json');
         return $response;
     }

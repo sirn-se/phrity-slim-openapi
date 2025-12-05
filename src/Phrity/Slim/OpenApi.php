@@ -15,6 +15,7 @@ use League\OpenAPIValidation\PSR7\{
     ResponseValidator,
     RoutedServerRequestValidator
 };
+use Psr\Container\ContainerInterface;
 use RuntimeException;
 use Slim\App;
 use Traversable;
@@ -28,6 +29,7 @@ class OpenApi implements IteratorAggregate
     private OpenApiSpec $openapi;
     private ValidatorBuilder $validation_builder;
     private object $settings;
+    /** @var array<string, string|bool> $defaultsettings */
     private static array $defaultsettings = [
         'controller_prefix' => '',
         'controller_method' => false,
@@ -45,6 +47,8 @@ class OpenApi implements IteratorAggregate
     public function __construct($source, array $settings = [])
     {
         $this->openapi = $this->readSpec($source);
+        // Use empty default, or validation will cause type error
+        $this->openapi->security = $this->openapi->security ?? [];
         $this->settings = (object)array_merge(self::$defaultsettings, $settings);
         if ($this->settings->strict && !$this->openapi->validate()) {
             throw new RuntimeException(implode(', ', $this->openapi->getErrors()));
@@ -64,7 +68,7 @@ class OpenApi implements IteratorAggregate
             foreach ($this->openapi->paths as $path => $pathItems) {
                 foreach ($pathItems->getOperations() as $method => $operation) {
                     if (empty($operation->operationId)) {
-                        if ($this->settings->strict) {
+                        if ($this->getSetting('strict')) {
                             throw new RuntimeException("Route {$path}:{$method} is missing operationId");
                         }
                         continue; // Unusable
@@ -77,7 +81,8 @@ class OpenApi implements IteratorAggregate
 
     /**
      * Register routes on Slim App.
-     * @param App $app                      Slim App instance to register routes on
+     * @template TContainerInterface of (ContainerInterface|null)
+     * @param App<TContainerInterface> $app Slim App instance to register routes on
      */
     public function route(App $app): void
     {
@@ -91,7 +96,7 @@ class OpenApi implements IteratorAggregate
      * @param string $key                   Setting key
      * @return mixed                        Setting value
      */
-    public function getSetting(string $key)
+    public function getSetting(string $key): mixed
     {
         return isset($this->settings->$key) ? $this->settings->$key : null;
     }

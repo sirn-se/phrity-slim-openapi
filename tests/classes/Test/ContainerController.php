@@ -20,13 +20,14 @@ use Psr\Http\Message\{
  */
 class ContainerController
 {
-    private ContainerInterface $container;
+    /** @phpstan-ignore property.onlyWritten */
+    private ContainerInterface|null $container;
 
     /**
      * Constructor for test controller.
      * @param ContainerInterface|null $container Container passed by Slim
      */
-    public function __construct(?ContainerInterface $container = null)
+    public function __construct(ContainerInterface|null $container = null)
     {
         $this->container = $container;
     }

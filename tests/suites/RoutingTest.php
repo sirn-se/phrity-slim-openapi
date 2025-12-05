@@ -37,7 +37,7 @@ class RoutingTest extends TestCase
     public function testRouting(): void
     {
         $slim = AppFactory::create();
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['strict' => true]);
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-1.json', ['strict' => true]);
         $openapi->route($slim);
 
         $request = self::createServerRequest('GET', '/test');
@@ -59,7 +59,7 @@ class RoutingTest extends TestCase
         $slim = AppFactory::create();
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('[] OpenApi is missing required property: paths');
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-empty.json', ['strict' => true]);
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-empty.json', ['strict' => true]);
     }
 
     /**
@@ -68,7 +68,7 @@ class RoutingTest extends TestCase
     public function testRoutingNoop(): void
     {
         $slim = AppFactory::create();
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-noop.json', ['strict' => true]);
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-noop.json', ['strict' => true]);
         $this->expectException('RuntimeException');
         $this->expectExceptionMessage('Route /test:put is missing operationId');
         $openapi->route($slim);
@@ -80,7 +80,7 @@ class RoutingTest extends TestCase
     public function testRoutingNoRoute(): void
     {
         $slim = AppFactory::create();
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-1.json', ['strict' => true]);
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-1.json', ['strict' => true]);
         $openapi->route($slim);
         $request = self::createServerRequest('GET', '/unexisting');
         $this->expectException('Slim\Exception\HttpNotFoundException');
@@ -96,7 +96,7 @@ class RoutingTest extends TestCase
     {
         $slim = AppFactory::create();
         $routeCollector = $slim->getRouteCollector();
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-2.json', [
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-2.json', [
             'strict' => true,
             'controller_prefix' => 'Test/',
         ]);
@@ -115,7 +115,7 @@ class RoutingTest extends TestCase
         $slim = AppFactory::create();
         $routeCollector = $slim->getRouteCollector();
         $routeCollector->setDefaultInvocationStrategy(new RequestResponseArgs());
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-2.json', [
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-2.json', [
             'strict' => true,
             'controller_prefix' => 'Test/',
         ]);
@@ -136,7 +136,7 @@ class RoutingTest extends TestCase
             return new \Test\ContainerController($container);
         });
         $slim = AppFactory::create(null, $container);
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-container.json', ['strict' => true]);
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-container.json', ['strict' => true]);
         $openapi->route($slim);
         $request = self::createServerRequest('GET', '/test');
         $response = $slim->handle($request);
@@ -150,7 +150,7 @@ class RoutingTest extends TestCase
     public function testRouteBind(): void
     {
         $slim = AppFactory::create();
-        $openapi = new OpenApi(__DIR__ . '/schemas/openapi-2.json', [
+        $openapi = new OpenApi(__DIR__ . '/../schemas/openapi-2.json', [
             'strict' => true,
             'controller_prefix' => 'Test/',
             'route_bind' => true,
